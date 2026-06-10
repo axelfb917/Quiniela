@@ -199,7 +199,10 @@ document.addEventListener('DOMContentLoaded', () => {
 // Cargar y estructurar base de datos desde el backend (Firebase)
 async function loadDatabase() {
     try {
-        const response = await fetch('https://quiniela-7fd9f-default-rtdb.firebaseio.com/.json');
+        // Añadimos cache: 'no-store' y un parámetro de fecha para forzar al navegador a obtener datos frescos
+        const response = await fetch('https://quiniela-7fd9f-default-rtdb.firebaseio.com/.json?t=' + Date.now(), {
+            cache: 'no-store'
+        });
         const data = await response.json();
 
         const officialResults = (data && data.official_results) ? data.official_results : null;
