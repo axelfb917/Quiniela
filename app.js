@@ -229,12 +229,33 @@ async function loadDatabase() {
         // 2. Cargar Usuarios
         if (users) {
             // Firebase puede retornar un objeto { u_1: {...} } o un arreglo. Lo normalizamos a arreglo.
-            state.users = Array.isArray(users) ? users.filter(Boolean) : Object.values(users);
+            let rawUsers = Array.isArray(users) ? users.filter(Boolean) : Object.values(users);
             
             // Eliminar usuarios de prueba (demo) si existen en la base de datos
-            const filteredUsers = state.users.filter(u => !u.id.startsWith('u_demo'));
-            if (filteredUsers.length !== state.users.length) {
-                state.users = filteredUsers;
+            rawUsers = rawUsers.filter(u => u && !u.id.startsWith('u_demo'));
+
+            // Eliminar duplicados accidentales de nombres si existen en la base de datos
+            const uniqueUsers = [];
+            const seenNames = new Set();
+            let databaseHadDuplicates = false;
+            
+            rawUsers.forEach(u => {
+                if (u && u.name) {
+                    const normalizedName = u.name.trim().toLowerCase();
+                    if (seenNames.has(normalizedName) && !u.isAdmin) {
+                        databaseHadDuplicates = true;
+                        // Eliminar de Firebase el duplicado
+                        fetch(`https://quiniela-7fd9f-default-rtdb.firebaseio.com/users/${u.id}.json`, { method: 'DELETE' });
+                    } else {
+                        seenNames.add(normalizedName);
+                        uniqueUsers.push(u);
+                    }
+                }
+            });
+            
+            state.users = uniqueUsers;
+            
+            if (databaseHadDuplicates) {
                 await saveUsersToStorage();
             }
 
@@ -1503,11 +1524,12 @@ function submitLogin() {
     switchPage('profile');
 }
 
-function submitRegister() {
+async function submitRegister() {
     const nameInput = document.getElementById('registerNameInput');
     const deptInput = document.getElementById('registerDeptInput');
     const passwordInput = document.getElementById('registerPasswordInput');
     const errorMsg = document.getElementById('registerErrorMsg');
+    const registerBtn = document.querySelector('#form-signup .btn-primary');
     
     if (!nameInput || !deptInput || !passwordInput) return;
     
@@ -1522,31 +1544,57 @@ function submitRegister() {
     
     if (errorMsg) errorMsg.style.display = 'none';
     
-    const exists = state.users.find(u => u.name.toLowerCase() === name.toLowerCase());
-    if (exists) {
-        alert("Ya existe un perfil registrado con ese nombre.");
-        return;
+    // Deshabilitar botón para evitar doble click y envíos duplicados
+    if (registerBtn) {
+        registerBtn.disabled = true;
+        registerBtn.textContent = 'Registrando...';
     }
     
-    const newUser = {
-        id: 'u_' + Date.now(),
-        name: name,
-        dept: dept,
-        password: password,
-        predictions: {},
-        knockoutWinner: {}
-    };
-    
-    state.users.push(newUser);
-    state.currentUser = newUser.id;
-    localStorage.setItem('iesa_current_user', newUser.id);
-    
-    nameInput.value = '';
-    deptInput.value = '';
-    passwordInput.value = '';
-    
-    saveUsersToStorage();
-    switchPage('profile');
+    try {
+        // Consultar la base de datos para obtener los perfiles reales actualizados
+        const response = await fetch('https://quiniela-7fd9f-default-rtdb.firebaseio.com/users.json');
+        const latestUsersObj = await response.json();
+        const latestUsers = latestUsersObj 
+            ? (Array.isArray(latestUsersObj) ? latestUsersObj.filter(Boolean) : Object.values(latestUsersObj))
+            : [];
+        
+        // Verificar duplicados contra la lista real actualizada
+        const exists = latestUsers.find(u => u && u.name && u.name.trim().toLowerCase() === name.toLowerCase());
+        if (exists) {
+            alert("Ya existe un perfil registrado con ese nombre.");
+            return;
+        }
+        
+        const newUser = {
+            id: 'u_' + Date.now(),
+            name: name,
+            dept: dept,
+            password: password,
+            predictions: {},
+            knockoutWinner: {}
+        };
+        
+        // Agregar al listado local y guardar solo el registro individual
+        state.users = latestUsers;
+        state.users.push(newUser);
+        state.currentUser = newUser.id;
+        localStorage.setItem('iesa_current_user', newUser.id);
+        
+        nameInput.value = '';
+        deptInput.value = '';
+        passwordInput.value = '';
+        
+        await saveUserRecord(newUser);
+        switchPage('profile');
+    } catch (error) {
+        console.error("Error al registrar:", error);
+        alert("Hubo un error al registrar tu perfil. Por favor intenta de nuevo.");
+    } finally {
+        if (registerBtn) {
+            registerBtn.disabled = false;
+            registerBtn.textContent = 'Registrarse e Ingresar';
+        }
+    }
 }
 
 function logout() {
