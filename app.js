@@ -370,7 +370,14 @@ async function loadDatabase() {
         const savedCurrentUser = localStorage.getItem('iesa_current_user');
         if (savedCurrentUser && state.users.find(u => u.id === savedCurrentUser)) {
             state.currentUser = savedCurrentUser;
-            switchPage('profile');
+            
+            // Recuperar el estado guardado de la navegación/filtros
+            const savedPage = localStorage.getItem('iesa_active_page') || 'profile';
+            state.currentGroup = localStorage.getItem('iesa_current_group') || 'ALL';
+            state.currentKnockoutRound = localStorage.getItem('iesa_current_knockout_round') || 'r32';
+            state.adminPhase = localStorage.getItem('iesa_admin_phase') || 'groups';
+            
+            switchPage(savedPage);
         } else {
             state.currentUser = null;
             switchPage('login');
@@ -448,6 +455,9 @@ function switchPage(pageId, navElement) {
         pageId = 'login';
     }
     state.activePage = pageId;
+    if (pageId !== 'login') {
+        localStorage.setItem('iesa_active_page', pageId);
+    }
     
     // Cambiar clases en las secciones de página
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -475,6 +485,7 @@ function switchPage(pageId, navElement) {
 // Cambiar pestaña del Bracket Fase Final
 function switchKnockoutRound(roundKey, element) {
     state.currentKnockoutRound = roundKey;
+    localStorage.setItem('iesa_current_knockout_round', roundKey);
     document.querySelectorAll('#knockoutNav .group-tab').forEach(t => t.classList.remove('active'));
     element.classList.add('active');
     renderKnockoutMatches();
@@ -483,6 +494,7 @@ function switchKnockoutRound(roundKey, element) {
 // Cambiar pestaña de administración en el panel Admin
 function switchAdminPhase(phaseKey, element) {
     state.adminPhase = phaseKey;
+    localStorage.setItem('iesa_admin_phase', phaseKey);
     document.querySelectorAll('#adminPhaseNav .group-tab').forEach(t => t.classList.remove('active'));
     element.classList.add('active');
     renderAdminMatches();
@@ -502,6 +514,7 @@ function setupGroupTabs() {
         allTab.textContent = 'Todos';
         allTab.onclick = () => {
             state.currentGroup = 'ALL';
+            localStorage.setItem('iesa_current_group', 'ALL');
             document.querySelectorAll('#groupsNav .group-tab').forEach(t => t.classList.remove('active'));
             allTab.classList.add('active');
             document.getElementById('currentGroupTitle').innerHTML = `Todos los Partidos <span>Pronósticos</span>`;
@@ -515,6 +528,7 @@ function setupGroupTabs() {
             tab.textContent = `Grupo ${g}`;
             tab.onclick = () => {
                 state.currentGroup = g;
+                localStorage.setItem('iesa_current_group', g);
                 document.querySelectorAll('#groupsNav .group-tab').forEach(t => t.classList.remove('active'));
                 tab.classList.add('active');
                 document.getElementById('currentGroupTitle').innerHTML = `Grupo ${g} <span>Pronósticos</span>`;
@@ -534,6 +548,7 @@ function setupGroupTabs() {
             tab.textContent = `Grupo ${g}`;
             tab.onclick = () => {
                 state.currentGroup = g;
+                localStorage.setItem('iesa_current_group', g);
                 document.querySelectorAll('#adminGroupsNav .group-tab').forEach(t => t.classList.remove('active'));
                 tab.classList.add('active');
                 document.getElementById('adminGroupTitle').innerHTML = `Grupo ${g} <span>Resultados Oficiales</span>`;
