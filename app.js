@@ -624,6 +624,12 @@ function renderGroupMatches() {
     }
     list.appendChild(banner);
 
+    // Controlar visibilidad del botón de Guardar
+    const saveBtnContainer = document.getElementById('saveBtnContainer');
+    if (saveBtnContainer) {
+        saveBtnContainer.style.display = (locked || user.isAdmin) ? 'none' : 'block';
+    }
+
     // Agrupar por fecha
     const matchesByDate = {};
     filteredMatches.forEach(match => {
@@ -1603,7 +1609,7 @@ function logout() {
     switchPage('login');
 }
 
-// Guardar marcador del pronóstico de forma directa
+// Guardar marcador del pronóstico de forma directa en el estado local
 function saveDirectPrediction(matchId, teamIndex, value) {
     const user = state.users.find(u => u.id === state.currentUser);
     if (!user || user.isAdmin) return;
@@ -1621,8 +1627,6 @@ function saveDirectPrediction(matchId, teamIndex, value) {
         user.predictions[matchId].score2 = parsedVal;
     }
     
-    saveUsersToStorage();
-    
     // Actualizar badge sin refrescar todo
     const card = document.querySelector(`[data-match-id="${matchId}"]`);
     if (card) {
@@ -1639,11 +1643,33 @@ function saveDirectPrediction(matchId, teamIndex, value) {
         }
     }
     
-    // Actualizar stats
+    // Actualizar stats de forma local
     const predictedGroupsCount = DEFAULT_MATCHES.filter(m => user.predictions[m.id] && user.predictions[m.id].score1 !== null && user.predictions[m.id].score2 !== null).length;
     const profileMatchesPredicted = document.getElementById('profileMatchesPredicted');
     if (profileMatchesPredicted) {
         profileMatchesPredicted.textContent = `${predictedGroupsCount}/${DEFAULT_MATCHES.length}`;
+    }
+}
+
+// Guardar todos los pronósticos modificados en Firebase
+async function saveAllPredictions() {
+    const saveBtn = document.getElementById('savePredictionsBtn');
+    if (saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '💾 Guardando pronósticos...';
+    }
+    
+    try {
+        await saveUsersToStorage();
+        alert("¡Tus pronósticos se han guardado exitosamente en Firebase!");
+    } catch (error) {
+        console.error("Error al guardar pronósticos:", error);
+        alert("Hubo un error de conexión al guardar. Por favor intenta de nuevo.");
+    } finally {
+        if (saveBtn) {
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = '💾 Guardar Pronósticos';
+        }
     }
 }
 
