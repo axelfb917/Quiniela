@@ -237,30 +237,77 @@ async function loadDatabase() {
             // Eliminar usuarios de prueba (demo) si existen en la base de datos
             rawUsers = rawUsers.filter(u => u && !u.id.startsWith('u_demo'));
 
-            // Eliminar duplicados accidentales de nombres si existen en la base de datos
-            const uniqueUsers = [];
-            const seenNames = new Set();
-            let databaseHadDuplicates = false;
-            
+            // Agrupar usuarios por nombre normalizado para detectar duplicados de forma inteligente
+            const usersByName = {};
             rawUsers.forEach(u => {
                 if (u && u.name) {
                     const normalizedName = u.name.trim().toLowerCase();
-                    if (seenNames.has(normalizedName) && !u.isAdmin) {
-                        databaseHadDuplicates = true;
-                        // Eliminar de Firebase el duplicado
-                        fetch(`https://quiniela-7fd9f-default-rtdb.firebaseio.com/users/${u.id}.json`, { method: 'DELETE' });
-                    } else {
-                        seenNames.add(normalizedName);
-                        uniqueUsers.push(u);
+                    if (!usersByName[normalizedName]) {
+                        usersByName[normalizedName] = [];
                     }
+                    usersByName[normalizedName].push(u);
                 }
             });
+
+            const uniqueUsers = [];
+            let databaseHadDuplicates = false;
+            const savedCurrentUser = localStorage.getItem('iesa_current_user');
+
+            for (const name in usersByName) {
+                const list = usersByName[name];
+                if (list.length === 1 || list[0].isAdmin) {
+                    uniqueUsers.push(list[0]);
+                } else {
+                    databaseHadDuplicates = true;
+                    // Seleccionar cuál perfil conservar: preferir el logueado actualmente,
+                    // o el que contenga la mayor cantidad de predicciones guardadas.
+                    let userToKeep = list.find(u => u.id === savedCurrentUser);
+                    if (!userToKeep) {
+                        list.sort((a, b) => {
+                            const countA = Object.keys(a.predictions || {}).length;
+                            const countB = Object.keys(b.predictions || {}).length;
+                            return countB - countA;
+                        });
+                        userToKeep = list[0];
+                    }
+                    
+                    // Asegurar nodos de predicciones
+                    if (!userToKeep.predictions) userToKeep.predictions = {};
+                    if (!userToKeep.knockoutWinner) userToKeep.knockoutWinner = {};
+                    
+                    // Consolidar/Combinar todas las predicciones de los perfiles duplicados en el que vamos a mantener
+                    list.forEach(u => {
+                        if (u.id !== userToKeep.id) {
+                            if (u.predictions) {
+                                for (const matchId in u.predictions) {
+                                    if (u.predictions[matchId] && u.predictions[matchId].score1 !== null && u.predictions[matchId].score2 !== null) {
+                                        userToKeep.predictions[matchId] = u.predictions[matchId];
+                                    }
+                                }
+                            }
+                            if (u.knockoutWinner) {
+                                for (const key in u.knockoutWinner) {
+                                    if (u.knockoutWinner[key]) {
+                                        userToKeep.knockoutWinner[key] = u.knockoutWinner[key];
+                                    }
+                                }
+                            }
+                            // Borrar el perfil duplicado obsoleto de Firebase
+                            fetch(`https://quiniela-7fd9f-default-rtdb.firebaseio.com/users/${u.id}.json`, { method: 'DELETE' });
+                        }
+                    });
+                    
+                    // Guardar el registro único consolidado en la base de datos
+                    uniqueUsers.push(userToKeep);
+                    fetch(`https://quiniela-7fd9f-default-rtdb.firebaseio.com/users/${userToKeep.id}.json`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(userToKeep)
+                    });
+                }
+            }
             
             state.users = uniqueUsers;
-            
-            if (databaseHadDuplicates) {
-                await saveUsersToStorage();
-            }
 
             // Sanitizar predicciones incompatibles
             state.users.forEach(u => {
