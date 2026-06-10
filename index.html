@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Quiniela Mundial IESA</title>
+    <meta name="description"
+        content="Quiniela interna del mundial para los empleados de IESA - Ingeniería en Elevadores.">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>⚽</text></svg>">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- CABECERA -->
+    <header>
+        <div class="logo-container">
+            <img src="logo.png" alt="IESA Logo" class="logo-img">
+            <div class="logo-text">IESA<span>Quiniela</span></div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <button id="themeToggleBtn" onclick="toggleTheme()" class="btn btn-secondary btn-sm"
+                style="padding: 0; border-radius: 50%; width: 34px; height: 34px; font-size: 1rem; border: 1px solid var(--border-color); background: rgba(255,255,255,0.05); color: var(--text-primary); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease;">
+                ☀️
+            </button>
+            <div class="user-status" id="headerUserBtn" onclick="switchPage('profile')">
+                <span class="user-avatar-indicator"></span>
+                <span id="headerUserName">Cargando...</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- CONTENEDOR DE PÁGINAS -->
+    <main class="page-container">
+
+        <!-- 1. PÁGINA: PERFIL / INICIO -->
+        <section id="page-profile" class="page active">
+            <div class="hero-card">
+                <div class="hero-title">¡Bienvenido a la Quiniela!</div>
+                <div class="hero-subtitle"></div>
+                <button class="btn btn-outline btn-sm" onclick="logout()"
+                    style="border: 1px solid var(--primary-color); background: transparent; color: var(--primary-color); cursor: pointer;">Cerrar
+                    Sesión</button>
+            </div>
+
+            <h2 class="section-title">Mi Perfil</h2>
+            <div class="match-card" style="align-items: stretch;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <div>
+                        <div id="profileName" style="font-size: 1.2rem; font-weight: 700;">Nombre Empleado</div>
+                        <div id="profileDept" style="font-size: 0.85rem; color: var(--text-secondary);">Departamento
+                        </div>
+                    </div>
+                    <div class="user-points-badge"
+                        style="font-size: 1.1rem; background: rgba(226, 0, 26, 0.1); border-color: rgba(226, 0, 26, 0.3);">
+                        <span id="profilePoints">0</span> Pts
+                    </div>
+                </div>
+
+                <div
+                    style="font-size: 0.85rem; border-top: 1px solid var(--border-color); padding-top: 12px; display: flex; justify-content: space-around; text-align: center;">
+                    <div>
+                        <div id="profileMatchesPredicted"
+                            style="font-weight: 700; font-size: 1.1rem; color: var(--success-color);">0/0</div>
+                        <div style="color: var(--text-muted); font-size: 0.75rem;">Grupos Pronosticados</div>
+                    </div>
+                    <div>
+                        <div id="profileKnockoutsPredicted"
+                            style="font-weight: 700; font-size: 1.1rem; color: var(--success-color);">0/32</div>
+                        <div style="color: var(--text-muted); font-size: 0.75rem;">Finales Pronosticados</div>
+                    </div>
+                </div>
+            </div>
+
+            <h2 class="section-title">Reglas del Juego</h2>
+            <div class="rules-container">
+                <div class="rules-row">
+                    <span>Resultado Exacto (Marcador exacto)</span>
+                    <span>+5 puntos</span>
+                </div>
+                <div class="rules-row">
+                    <span>Acierto Tendencia (Ganador/Empate diferente marcador)</span>
+                    <span>+3 puntos</span>
+                </div>
+                <div class="rules-row">
+                    <span>Acierto Equipo en Fase Final (Por clasificado)</span>
+                    <span>+5 puntos</span>
+                </div>
+                <div style="margin-top: 6px; font-size: 0.75rem; color: var(--text-muted); line-height: 1.3;">
+                    * Los puntos se actualizan de forma automática en cuanto el admin introduce los resultados
+                    oficiales de los partido.
+                </div>
+            </div>
+        </section>
+
+
+        <!-- 2. PÁGINA: GRUPOS -->
+        <section id="page-groups" class="page">
+            <div class="groups-nav" id="groupsNav">
+                <!-- Se poblará con JavaScript (A, B, C, D, E, F, G, H) -->
+            </div>
+
+            <h2 class="section-title" id="currentGroupTitle">Grupo A <span>Pronósticos</span></h2>
+            <div id="groupMatchesList">
+                <!-- Se poblará dinámicamente con las tarjetas de partidos -->
+            </div>
+        </section>
+
+
+        <!-- 3. PÁGINA: FASE FINAL -->
+        <section id="page-knockout" class="page">
+            <div class="hero-card" style="padding: 12px; margin-bottom: 16px;">
+                <div style="font-size: 0.9rem; font-weight: 600;">Pronóstico Fase Final</div>
+                <div style="font-size: 0.75rem; color: var(--text-secondary);">Selecciona haciendo click sobre el equipo
+                    que creas que avanzará en cada llave.</div>
+            </div>
+
+            <div class="groups-nav" id="knockoutNav">
+                <div class="group-tab active" onclick="switchKnockoutRound('r32', this)">Eliminatoria de 32</div>
+                <div class="group-tab" onclick="switchKnockoutRound('r16', this)">Octavos</div>
+                <div class="group-tab" onclick="switchKnockoutRound('qf', this)">Cuartos</div>
+                <div class="group-tab" onclick="switchKnockoutRound('sf', this)">Semifinales</div>
+                <div class="group-tab" onclick="switchKnockoutRound('f', this)">Final</div>
+            </div>
+
+            <div class="bracket-wrapper" id="knockoutMatchesList">
+                <!-- Se poblará dinámicamente -->
+            </div>
+        </section>
+
+
+        <!-- 4. PÁGINA: TABLA GENERAL -->
+        <section id="page-leaderboard" class="page">
+            <h2 class="section-title">Tabla de Posiciones <span>Ranking IESA</span></h2>
+            <div class="leaderboard-list" id="leaderboardList">
+                <!-- Se poblará dinámicamente con los puntajes de los empleados -->
+            </div>
+        </section>
+
+
+        <!-- 5. PÁGINA: ADMINISTRADOR / SIMULADOR -->
+        <section id="page-admin" class="page">
+            <div class="hero-card admin-hero">
+                <div class="hero-title">Modo Administrador / Simulador</div>
+                <div class="hero-subtitle">Ingresa los marcadores oficiales de los partidos de la fase de grupos. Esto
+                    actualizará los puntajes de todos los participantes y reordenará la tabla de forma instantánea.
+                </div>
+                <button class="btn btn-outline btn-sm btn-admin-reset" onclick="resetOfficialResults()">Restablecer
+                    Resultados Oficiales</button>
+            </div>
+
+            <div class="groups-nav" id="adminPhaseNav"
+                style="margin-bottom: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+                <div class="group-tab active" onclick="switchAdminPhase('groups', this)">Fase de Grupos</div>
+                <div class="group-tab" onclick="switchAdminPhase('r32', this)">Dieciseisavos</div>
+                <div class="group-tab" onclick="switchAdminPhase('r16', this)">Octavos</div>
+                <div class="group-tab" onclick="switchAdminPhase('qf', this)">Cuartos</div>
+                <div class="group-tab" onclick="switchAdminPhase('sf', this)">Semifinales</div>
+                <div class="group-tab" onclick="switchAdminPhase('f', this)">Finales</div>
+            </div>
+
+            <div class="groups-nav" id="adminGroupsNav">
+                <!-- Tabs para administrar grupos -->
+            </div>
+
+            <h2 class="section-title" id="adminGroupTitle">Grupo A <span>Resultados Oficiales</span></h2>
+            <div id="adminMatchesList">
+                <!-- Lista de partidos para definir resultados reales -->
+            </div>
+        </section>
+
+        <!-- 6. PÁGINA: ACCESO / REGISTRO INDEPENDIENTE -->
+        <section id="page-login" class="page">
+            <div class="login-card">
+                <div class="login-header">
+                    <div class="login-title">Acceso Quiniela IESA</div>
+                    <div class="login-subtitle">Ingresa tus credenciales para registrar tus pronósticos</div>
+                </div>
+
+                <div class="login-tabs">
+                    <div class="login-tab active" id="tab-signin" onclick="switchLoginTab('signin')">Iniciar Sesión
+                    </div>
+                    <div class="login-tab" id="tab-signup" onclick="switchLoginTab('signup')">Registrarse</div>
+                </div>
+
+                <!-- FORMULARIO DE INICIAR SESIÓN -->
+                <div id="form-signin" class="login-form-content active">
+                    <div class="form-group" style="margin-bottom: 16px;">
+                        <label class="form-label"
+                            style="display: block; margin-bottom: 6px; font-size: 0.85rem; font-weight: 500;">Selecciona
+                            tu Perfil</label>
+                        <select id="loginUserSelect" class="form-input"
+                            style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: rgba(255,255,255,0.05); color: var(--text-primary); outline: none;">
+                            <!-- Se poblará dinámicamente -->
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 16px;">
+                        <label class="form-label"
+                            style="display: block; margin-bottom: 6px; font-size: 0.85rem; font-weight: 500;">Contraseña</label>
+                        <input type="password" id="loginPasswordInput" class="form-input"
+                            placeholder="Ingresa tu contraseña"
+                            style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: rgba(255,255,255,0.05); color: var(--text-primary); outline: none;">
+                    </div>
+                    <div id="loginErrorMsg" class="error-msg"
+                        style="display: none; color: var(--primary-color); font-size: 0.8rem; margin-bottom: 12px; font-weight: 500;">
+                        ⚠️ Contraseña incorrecta.
+                    </div>
+                    <button class="btn btn-primary"
+                        style="width: 100%; padding: 12px; font-weight: 600; cursor: pointer;"
+                        onclick="submitLogin()">Ingresar</button>
+                </div>
+
+                <!-- FORMULARIO DE REGISTRO -->
+                <div id="form-signup" class="login-form-content">
+                    <div class="form-group" style="margin-bottom: 14px;">
+                        <label class="form-label"
+                            style="display: block; margin-bottom: 6px; font-size: 0.85rem; font-weight: 500;">Nombre
+                            Completo</label>
+                        <input type="text" id="registerNameInput" class="form-input" placeholder="Ej. Carlos Mendoza"
+                            style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: rgba(255,255,255,0.05); color: var(--text-primary); outline: none;">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 14px;">
+                        <label class="form-label"
+                            style="display: block; margin-bottom: 6px; font-size: 0.85rem; font-weight: 500;">Departamento</label>
+                        <input type="text" id="registerDeptInput" class="form-input" placeholder="Ej. Operaciones"
+                            style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: rgba(255,255,255,0.05); color: var(--text-primary); outline: none;">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 16px;">
+                        <label class="form-label"
+                            style="display: block; margin-bottom: 6px; font-size: 0.85rem; font-weight: 500;">Contraseña
+                            de Acceso</label>
+                        <input type="password" id="registerPasswordInput" class="form-input"
+                            placeholder="Crea tu contraseña"
+                            style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: rgba(255,255,255,0.05); color: var(--text-primary); outline: none;">
+                    </div>
+                    <div id="registerErrorMsg" class="error-msg"
+                        style="display: none; color: var(--primary-color); font-size: 0.8rem; margin-bottom: 12px; font-weight: 500;">
+                        ⚠️ Todos los campos son requeridos.
+                    </div>
+                    <button class="btn btn-primary"
+                        style="width: 100%; padding: 12px; font-weight: 600; cursor: pointer;"
+                        onclick="submitRegister()">Registrarse e Ingresar</button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- NAVEGACIÓN INFERIOR -->
+    <nav class="bottom-nav">
+        <div class="nav-item active" onclick="switchPage('profile', this)">
+            <span class="nav-icon">👤</span>
+            <span>Perfil</span>
+        </div>
+        <div class="nav-item" onclick="switchPage('groups', this)">
+            <span class="nav-icon">🏆</span>
+            <span>Grupos</span>
+        </div>
+        <div class="nav-item" onclick="switchPage('knockout', this)">
+            <span class="nav-icon">📊</span>
+            <span>Finales</span>
+        </div>
+        <div class="nav-item" onclick="switchPage('leaderboard', this)">
+            <span class="nav-icon">📈</span>
+            <span>Tabla</span>
+        </div>
+        <div class="nav-item" id="nav-item-admin" onclick="switchPage('admin', this)">
+            <span class="nav-icon">⚙️</span>
+            <span>Admin</span>
+        </div>
+    </nav>
+
+
+
+    <!-- SCRIPT PRINCIPAL -->
+    <script src="app.js"></script>
+</body>
+
+</html>
