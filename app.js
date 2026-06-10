@@ -199,12 +199,15 @@ document.addEventListener('DOMContentLoaded', () => {
 // Cargar y estructurar base de datos desde el backend (Firebase)
 async function loadDatabase() {
     try {
-        const response = await fetch('/api/data');
+        const response = await fetch('https://quiniela-7fd9f-default-rtdb.firebaseio.com/.json');
         const data = await response.json();
 
+        const officialResults = (data && data.official_results) ? data.official_results : null;
+        const users = (data && data.users) ? data.users : null;
+
         // 1. Cargar Resultados Oficiales
-        if (data.officialResults) {
-            state.officialResults = data.officialResults;
+        if (officialResults) {
+            state.officialResults = officialResults;
             
             // Sanitizar resultados de fase final incompatibles del formato anterior
             const hasR32 = Object.keys(state.officialResults).some(k => k.startsWith('R32_'));
@@ -224,8 +227,8 @@ async function loadDatabase() {
         }
 
         // 2. Cargar Usuarios
-        if (data.users) {
-            state.users = Array.isArray(data.users) ? data.users : Object.values(data.users);
+        if (users) {
+            state.users = Array.isArray(users) ? users : Object.values(users);
             
             // Eliminar usuarios de prueba (demo) si existen en la base de datos
             const filteredUsers = state.users.filter(u => !u.id.startsWith('u_demo'));
@@ -294,12 +297,12 @@ async function loadDatabase() {
 // Guardar usuarios en la base de datos a través del backend
 async function saveUsersToStorage() {
     try {
-        await fetch('/api/users', {
-            method: 'POST',
+        await fetch('https://quiniela-7fd9f-default-rtdb.firebaseio.com/users.json', {
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ users: state.users })
+            body: JSON.stringify(state.users)
         });
     } catch (error) {
         console.error("Error al guardar usuarios en Firebase:", error);
@@ -309,12 +312,12 @@ async function saveUsersToStorage() {
 // Guardar resultados oficiales en la base de datos a través del backend
 async function saveOfficialResultsToStorage() {
     try {
-        await fetch('/api/results', {
-            method: 'POST',
+        await fetch('https://quiniela-7fd9f-default-rtdb.firebaseio.com/official_results.json', {
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ officialResults: state.officialResults })
+            body: JSON.stringify(state.officialResults)
         });
     } catch (error) {
         console.error("Error al guardar resultados en Firebase:", error);
