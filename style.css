@@ -1136,3 +1136,22 @@ body.light-theme .hero-card.admin-hero .hero-subtitle {
     color: var(--text-secondary);
 }
 
+/* Contenedor flotante permanente del botón de guardar */
+#saveBtnContainer {
+    position: fixed;
+    bottom: 68px; /* Justo arriba de la barra de navegación inferior */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 480px;
+    background: linear-gradient(to top, var(--bg-color) 80%, transparent);
+    padding: 12px 16px 20px 16px;
+    box-sizing: border-box;
+    z-index: 100;
+}
+
+/* Espaciado para que el botón flotante no cubra la última tarjeta de partido */
+#groupMatchesList {
+    padding-bottom: 90px;
+}
+

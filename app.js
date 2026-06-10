@@ -255,7 +255,7 @@ async function loadDatabase() {
 
             for (const name in usersByName) {
                 const list = usersByName[name];
-                if (list.length === 1 || list[0].isAdmin) {
+                if (list.length === 1) {
                     uniqueUsers.push(list[0]);
                 } else {
                     databaseHadDuplicates = true;
@@ -277,7 +277,7 @@ async function loadDatabase() {
                     
                     // Consolidar/Combinar todas las predicciones de los perfiles duplicados en el que vamos a mantener
                     list.forEach(u => {
-                        if (u.id !== userToKeep.id) {
+                        if (u !== userToKeep) {
                             if (u.predictions) {
                                 for (const matchId in u.predictions) {
                                     if (u.predictions[matchId] && u.predictions[matchId].score1 !== null && u.predictions[matchId].score2 !== null) {
@@ -292,22 +292,37 @@ async function loadDatabase() {
                                     }
                                 }
                             }
-                            // Borrar el perfil duplicado obsoleto de Firebase
-                            fetch(`https://quiniela-7fd9f-default-rtdb.firebaseio.com/users/${u.id}.json`, { method: 'DELETE' });
                         }
                     });
                     
-                    // Guardar el registro único consolidado en la base de datos
                     uniqueUsers.push(userToKeep);
-                    fetch(`https://quiniela-7fd9f-default-rtdb.firebaseio.com/users/${userToKeep.id}.json`, {
-                        method: 'PUT',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(userToKeep)
-                    });
                 }
             }
             
             state.users = uniqueUsers;
+
+            // Si detectamos formato viejo (arreglo), índices numéricos o duplicados,
+            // reescribimos el nodo '/users' por completo de forma limpia
+            const hadNumericKeys = !Array.isArray(users) && Object.keys(users).some(k => !isNaN(k));
+            if (databaseHadDuplicates || Array.isArray(users) || hadNumericKeys) {
+                const cleanedUsersObj = {};
+                uniqueUsers.forEach(u => {
+                    if (u && u.id) {
+                        cleanedUsersObj[u.id] = u;
+                    }
+                });
+                try {
+                    await fetch('https://quiniela-7fd9f-default-rtdb.firebaseio.com/users.json', {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(cleanedUsersObj)
+                    });
+                } catch (e) {
+                    console.error("Error al reescribir base de datos limpia:", e);
+                }
+            }
 
             // Sanitizar predicciones incompatibles
             state.users.forEach(u => {
