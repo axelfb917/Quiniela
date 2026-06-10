@@ -228,7 +228,8 @@ async function loadDatabase() {
 
         // 2. Cargar Usuarios
         if (users) {
-            state.users = Array.isArray(users) ? users : Object.values(users);
+            // Firebase puede retornar un objeto { u_1: {...} } o un arreglo. Lo normalizamos a arreglo.
+            state.users = Array.isArray(users) ? users.filter(Boolean) : Object.values(users);
             
             // Eliminar usuarios de prueba (demo) si existen en la base de datos
             const filteredUsers = state.users.filter(u => !u.id.startsWith('u_demo'));
@@ -294,18 +295,49 @@ async function loadDatabase() {
     }
 }
 
-// Guardar usuarios en la base de datos a través del backend
+// Guardar usuarios en la base de datos de forma segura para evitar sobreescrituras concurrentes
 async function saveUsersToStorage() {
+    const activeUser = state.users.find(u => u.id === state.currentUser);
+    
+    // Si el usuario activo es administrador, realizamos un PATCH por lotes para actualizar puntajes
+    // sin borrar usuarios que se estén registrando en el mismo momento.
+    if (activeUser && activeUser.isAdmin) {
+        const patchData = {};
+        state.users.forEach(u => {
+            if (u && u.id) {
+                patchData[u.id] = u;
+            }
+        });
+        try {
+            await fetch('https://quiniela-7fd9f-default-rtdb.firebaseio.com/users.json', {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(patchData)
+            });
+        } catch (error) {
+            console.error("Error al actualizar lote de usuarios en Firebase:", error);
+        }
+    } else if (activeUser) {
+        // Si es un usuario común, solo guarda su propia información
+        await saveUserRecord(activeUser);
+    }
+}
+
+// Guardar un perfil de usuario individual de forma aislada
+async function saveUserRecord(user) {
+    if (!user || !user.id) return;
     try {
-        await fetch('https://quiniela-7fd9f-default-rtdb.firebaseio.com/users.json', {
+        await fetch(`https://quiniela-7fd9f-default-rtdb.firebaseio.com/users/${user.id}.json`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(state.users)
+            body: JSON.stringify(user)
         });
     } catch (error) {
-        console.error("Error al guardar usuarios en Firebase:", error);
+        console.error(`Error al guardar usuario ${user.id} en Firebase:`, error);
     }
 }
 
