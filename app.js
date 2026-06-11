@@ -423,13 +423,13 @@ async function loadDatabase() {
 async function saveUsersToStorage() {
     const activeUser = state.users.find(u => u.id === state.currentUser);
     
-    // Si el usuario activo es administrador, realizamos un PATCH por lotes para actualizar puntajes
-    // sin borrar usuarios que se estén registrando en el mismo momento.
+    // Si el usuario activo es administrador, realizamos un PATCH de los puntajes
+    // actualizados sin sobreescribir las predicciones de los usuarios.
     if (activeUser && activeUser.isAdmin) {
         const patchData = {};
         state.users.forEach(u => {
-            if (u && u.id) {
-                patchData[u.id] = u;
+            if (u && u.id && !u.isAdmin) {
+                patchData[`${u.id}/totalPoints`] = u.totalPoints || 0;
             }
         });
         try {
@@ -441,7 +441,7 @@ async function saveUsersToStorage() {
                 body: JSON.stringify(patchData)
             });
         } catch (error) {
-            console.error("Error al actualizar lote de usuarios en Firebase:", error);
+            console.error("Error al actualizar lote de puntajes en Firebase:", error);
         }
     } else if (activeUser) {
         // Si es un usuario común, solo guarda su propia información
