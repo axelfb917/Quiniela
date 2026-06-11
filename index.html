@@ -21,6 +21,11 @@
             <div class="logo-text">I-ESA<span>Quiniela</span></div>
         </div>
         <div style="display: flex; align-items: center; gap: 8px;">
+            <button id="headerSavePredictionsBtn" onclick="saveAllPredictions()" class="btn btn-secondary btn-sm"
+                style="padding: 0; border-radius: 50%; width: 34px; height: 34px; font-size: 1.1rem; border: 1px solid var(--border-color); background: rgba(255,255,255,0.05); color: var(--text-primary); display: none; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease;"
+                title="Guardar Pronósticos">
+                💾
+            </button>
             <button id="themeToggleBtn" onclick="toggleTheme()" class="btn btn-secondary btn-sm"
                 style="padding: 0; border-radius: 50%; width: 34px; height: 34px; font-size: 1rem; border: 1px solid var(--border-color); background: rgba(255,255,255,0.05); color: var(--text-primary); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease;">
                 ☀️
@@ -106,13 +111,6 @@
             <div id="groupMatchesList">
                 <!-- Se poblará dinámicamente con las tarjetas de partidos -->
             </div>
-            
-            <!-- Botón de Guardar Pronósticos -->
-            <div id="saveBtnContainer">
-                <button id="savePredictionsBtn" class="btn btn-primary" onclick="saveAllPredictions()" style="width: 100%; max-width: 320px; padding: 14px 24px; font-weight: 700; font-size: 1rem; border-radius: 12px; cursor: pointer; box-shadow: 0 4px 15px rgba(226, 0, 26, 0.25); display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
-                    💾 Guardar Pronósticos
-                </button>
-            </div>
         </section>
 
 
@@ -166,6 +164,7 @@
                 <div class="group-tab" onclick="switchAdminPhase('qf', this)">Cuartos</div>
                 <div class="group-tab" onclick="switchAdminPhase('sf', this)">Semifinales</div>
                 <div class="group-tab" onclick="switchAdminPhase('f', this)">Finales</div>
+                <div class="group-tab" onclick="switchAdminPhase('users_predictions', this)">Pronósticos de Usuarios</div>
             </div>
 
             <div class="groups-nav" id="adminGroupsNav">

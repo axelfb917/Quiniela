@@ -598,6 +598,16 @@ function renderAll() {
     // Renderizar datos del perfil de cabecera
     const user = state.users.find(u => u.id === state.currentUser);
 
+    // Control de visibilidad del botón de Guardar en la cabecera
+    const headerSaveBtn = document.getElementById('headerSavePredictionsBtn');
+    if (headerSaveBtn) {
+        if (user && !user.isAdmin && !isGroupStageLocked() && state.activePage === 'groups') {
+            headerSaveBtn.style.display = 'flex';
+        } else {
+            headerSaveBtn.style.display = 'none';
+        }
+    }
+
     // Control de visibilidad de la pestaña Administrador
     const adminTab = document.getElementById('nav-item-admin');
     if (adminTab) {
@@ -703,12 +713,6 @@ function renderGroupMatches() {
         `;
     }
     list.appendChild(banner);
-
-    // Controlar visibilidad del botón de Guardar
-    const saveBtnContainer = document.getElementById('saveBtnContainer');
-    if (saveBtnContainer) {
-        saveBtnContainer.style.display = (locked || user.isAdmin) ? 'none' : 'block';
-    }
 
     // Agrupar por fecha
     const matchesByDate = {};
@@ -1307,6 +1311,89 @@ function renderAdminMatches() {
             `;
             list.appendChild(card);
         });
+    } else if (phase === 'users_predictions') {
+        // Ocultar navegación de grupos
+        if (adminGroupsNav) adminGroupsNav.style.display = 'none';
+        if (adminGroupTitle) {
+            adminGroupTitle.style.display = 'block';
+            adminGroupTitle.innerHTML = `Pronósticos de Usuarios <span>Listado</span>`;
+        }
+
+        const regularUsers = state.users.filter(u => !u.isAdmin);
+
+        if (regularUsers.length === 0) {
+            list.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-secondary);">No hay usuarios registrados.</div>`;
+            return;
+        }
+
+        regularUsers.forEach(u => {
+            const groupPredCount = DEFAULT_MATCHES.filter(m => u.predictions && u.predictions[m.id] && u.predictions[m.id].score1 !== null && u.predictions[m.id].score2 !== null).length;
+            const knockoutPredCount = Object.keys(u.knockoutWinner || {}).length;
+
+            const userCard = document.createElement('div');
+            userCard.className = 'match-card';
+            userCard.style.flexDirection = 'column';
+            userCard.style.gap = '8px';
+
+            // Generar detalles de pronósticos
+            let detailsHtml = '';
+            detailsHtml += `<div class="user-pred-details" id="details-${u.id}" style="display:none; margin-top:12px; border-top:1px solid var(--border-color); padding-top:12px; font-size:0.85rem; max-height: 300px; overflow-y: auto;">`;
+
+            detailsHtml += `<div style="font-weight:700; color:var(--primary-color); margin-bottom:8px;">Fase de Grupos (${groupPredCount}/${DEFAULT_MATCHES.length}):</div>`;
+            if (groupPredCount === 0) {
+                detailsHtml += `<div style="color:var(--text-muted); margin-bottom:12px;">Sin pronósticos guardados en grupos.</div>`;
+            } else {
+                detailsHtml += `<div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px; margin-bottom:12px;">`;
+                DEFAULT_MATCHES.forEach(m => {
+                    const p = u.predictions[m.id];
+                    if (p && p.score1 !== null && p.score2 !== null) {
+                        detailsHtml += `<div style="background:rgba(255,255,255,0.02); padding:4px 8px; border-radius:6px; display:flex; justify-content:space-between; align-items:center;">
+                            <span>${m.emoji1} ${m.team1.substring(0,3)} vs ${m.team2.substring(0,3)} ${m.emoji2}</span>
+                            <strong style="color:var(--success-color);">${p.score1} - ${p.score2}</strong>
+                        </div>`;
+                    }
+                });
+                detailsHtml += `</div>`;
+            }
+
+            detailsHtml += `<div style="font-weight:700; color:var(--primary-color); margin-bottom:8px;">Fase Final (${knockoutPredCount}/32):</div>`;
+            if (knockoutPredCount === 0) {
+                detailsHtml += `<div style="color:var(--text-muted);">Sin pronósticos de fase final.</div>`;
+            } else {
+                detailsHtml += `<div style="display:grid; grid-template-columns: 1fr; gap:6px;">`;
+                const roundLabels = { r32: 'Eliminatoria 32', r16: 'Octavos', qf: 'Cuartos', sf: 'Semis', f: 'Finales' };
+                for (const key in u.knockoutWinner) {
+                    const [round, matchIdx] = key.split('_');
+                    const winner = u.knockoutWinner[key];
+                    const roundName = roundLabels[round] || round;
+                    detailsHtml += `<div style="background:rgba(255,255,255,0.02); padding:4px 8px; border-radius:6px; display:flex; justify-content:space-between;">
+                        <span style="color:var(--text-secondary);">${roundName} (Llave ${parseInt(matchIdx)+1})</span>
+                        <strong style="color:var(--success-color);">${getTeamEmoji(winner)} ${winner}</strong>
+                    </div>`;
+                }
+                detailsHtml += `</div>`;
+            }
+
+            detailsHtml += `</div>`;
+
+            userCard.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <strong style="font-size:1rem; color:var(--text-primary);">${u.name}</strong>
+                        <div style="font-size:0.75rem; color:var(--text-secondary);">${u.dept}</div>
+                    </div>
+                    <div style="text-align:right;">
+                        <div style="font-size:0.8rem; font-weight:700; color:var(--success-color);">Grupos: ${groupPredCount}/${DEFAULT_MATCHES.length}</div>
+                        <div style="font-size:0.8rem; font-weight:700; color:var(--warning-color);">Finales: ${knockoutPredCount}/32</div>
+                    </div>
+                </div>
+                <div style="display:flex; justify-content:flex-end; margin-top:8px;">
+                    <button class="btn btn-secondary btn-sm" onclick="toggleUserPredDetails('${u.id}', this)" style="padding:4px 10px; font-size:0.75rem;">Ver Pronósticos 🔽</button>
+                </div>
+                ${detailsHtml}
+            `;
+            list.appendChild(userCard);
+        });
     } else {
         // Ocultar navegación de grupos
         if (adminGroupsNav) adminGroupsNav.style.display = 'none';
@@ -1733,22 +1820,24 @@ function saveDirectPrediction(matchId, teamIndex, value) {
 
 // Guardar todos los pronósticos modificados en Firebase
 async function saveAllPredictions() {
-    const saveBtn = document.getElementById('savePredictionsBtn');
+    const saveBtn = document.getElementById('headerSavePredictionsBtn');
     if (saveBtn) {
         saveBtn.disabled = true;
-        saveBtn.innerHTML = '💾 Guardando pronósticos...';
+        saveBtn.textContent = '⏳';
+        saveBtn.style.opacity = '0.5';
     }
     
     try {
         await saveUsersToStorage();
-        alert("¡Tus pronósticos se han guardado exitosamente en Firebase!");
+        alert("¡Tus pronósticos se han guardado exitosamente!");
     } catch (error) {
         console.error("Error al guardar pronósticos:", error);
         alert("Hubo un error de conexión al guardar. Por favor intenta de nuevo.");
     } finally {
         if (saveBtn) {
             saveBtn.disabled = false;
-            saveBtn.innerHTML = '💾 Guardar Pronósticos';
+            saveBtn.textContent = '💾';
+            saveBtn.style.opacity = '1';
         }
     }
 }
@@ -1803,4 +1892,13 @@ function initTheme() {
         document.body.classList.remove('light-theme');
     }
     updateThemeToggleBtn();
+}
+
+function toggleUserPredDetails(userId, btn) {
+    const details = document.getElementById(`details-${userId}`);
+    if (details) {
+        const isHidden = details.style.display === 'none';
+        details.style.display = isHidden ? 'block' : 'none';
+        btn.innerHTML = isHidden ? 'Ocultar Pronósticos 🔼' : 'Ver Pronósticos 🔽';
+    }
 }
