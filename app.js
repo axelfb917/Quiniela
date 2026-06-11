@@ -171,7 +171,7 @@ const DEFAULT_GROUP_STANDINGS = {
 };
 
 // Fecha límite para votaciones de la Fase de Grupos
-const FIRST_STAGE_LOCK_TIME = new Date('2026-06-11T13:00:00-06:00');
+const FIRST_STAGE_LOCK_TIME = new Date('2026-06-11T13:30:00-06:00');
 const SECOND_STAGE_LOCK_TIME = new Date('2026-06-20T00:00:00-06:00'); // Antes de las 12:00 AM (medianoche) del 20 de junio
 
 let cachedFirst36Ids = null;
