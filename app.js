@@ -1316,7 +1316,7 @@ function renderAdminMatches() {
         if (adminGroupsNav) adminGroupsNav.style.display = 'none';
         if (adminGroupTitle) {
             adminGroupTitle.style.display = 'block';
-            adminGroupTitle.innerHTML = `Pronósticos de Usuarios <span>Listado</span>`;
+            adminGroupTitle.innerHTML = `Estatus de Pronósticos <span>Administrador</span>`;
         }
 
         const regularUsers = state.users.filter(u => !u.isAdmin);
@@ -1326,74 +1326,147 @@ function renderAdminMatches() {
             return;
         }
 
+        // Listas categorizadas por completitud
+        const completados = [];
+        const incompletos = [];
+        const sinIniciar = [];
+
         regularUsers.forEach(u => {
             const groupPredCount = DEFAULT_MATCHES.filter(m => u.predictions && u.predictions[m.id] && u.predictions[m.id].score1 !== null && u.predictions[m.id].score2 !== null).length;
             const knockoutPredCount = Object.keys(u.knockoutWinner || {}).length;
 
-            const userCard = document.createElement('div');
-            userCard.className = 'match-card';
-            userCard.style.flexDirection = 'column';
-            userCard.style.gap = '8px';
+            const userData = {
+                user: u,
+                groupPredCount,
+                knockoutPredCount,
+                isComplete: (groupPredCount === DEFAULT_MATCHES.length && knockoutPredCount === 32),
+                isNotStarted: (groupPredCount === 0 && knockoutPredCount === 0)
+            };
 
-            // Generar detalles de pronósticos
-            let detailsHtml = '';
-            detailsHtml += `<div class="user-pred-details" id="details-${u.id}" style="display:none; margin-top:12px; border-top:1px solid var(--border-color); padding-top:12px; font-size:0.85rem; max-height: 300px; overflow-y: auto;">`;
-
-            detailsHtml += `<div style="font-weight:700; color:var(--primary-color); margin-bottom:8px;">Fase de Grupos (${groupPredCount}/${DEFAULT_MATCHES.length}):</div>`;
-            if (groupPredCount === 0) {
-                detailsHtml += `<div style="color:var(--text-muted); margin-bottom:12px;">Sin pronósticos guardados en grupos.</div>`;
+            if (userData.isComplete) {
+                completados.push(userData);
+            } else if (userData.isNotStarted) {
+                sinIniciar.push(userData);
             } else {
-                detailsHtml += `<div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px; margin-bottom:12px;">`;
-                DEFAULT_MATCHES.forEach(m => {
-                    const p = u.predictions[m.id];
-                    if (p && p.score1 !== null && p.score2 !== null) {
-                        detailsHtml += `<div style="background:rgba(255,255,255,0.02); padding:4px 8px; border-radius:6px; display:flex; justify-content:space-between; align-items:center;">
-                            <span>${m.emoji1} ${m.team1.substring(0,3)} vs ${m.team2.substring(0,3)} ${m.emoji2}</span>
-                            <strong style="color:var(--success-color);">${p.score1} - ${p.score2}</strong>
+                incompletos.push(userData);
+            }
+        });
+
+        // Crear contenedor para las tarjetas de estadísticas resumidas
+        const statsDashboard = document.createElement('div');
+        statsDashboard.style.display = 'grid';
+        statsDashboard.style.gridTemplateColumns = 'repeat(3, 1fr)';
+        statsDashboard.style.gap = '10px';
+        statsDashboard.style.marginBottom = '20px';
+        statsDashboard.innerHTML = `
+            <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 12px; padding: 10px; text-align: center;">
+                <div style="font-size: 1.5rem; font-weight: 800; color: var(--success-color);">${completados.length}</div>
+                <div style="font-size: 0.7rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 700;">Completos</div>
+            </div>
+            <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 12px; padding: 10px; text-align: center;">
+                <div style="font-size: 1.5rem; font-weight: 800; color: var(--warning-color);">${incompletos.length}</div>
+                <div style="font-size: 0.7rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 700;">Incompletos</div>
+            </div>
+            <div style="background: rgba(226, 0, 26, 0.1); border: 1px solid rgba(226, 0, 26, 0.2); border-radius: 12px; padding: 10px; text-align: center;">
+                <div style="font-size: 1.5rem; font-weight: 800; color: var(--primary-color);">${sinIniciar.length}</div>
+                <div style="font-size: 0.7rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 700;">Sin Iniciar</div>
+            </div>
+        `;
+        list.appendChild(statsDashboard);
+
+        // Función auxiliar para renderizar un grupo de usuarios
+        const renderUserGroup = (title, items, colorClass, statusLabel) => {
+            const sectionHeader = document.createElement('h3');
+            sectionHeader.className = 'section-title';
+            sectionHeader.innerHTML = `${title} <span>(${items.length})</span>`;
+            list.appendChild(sectionHeader);
+
+            if (items.length === 0) {
+                const emptyMsg = document.createElement('div');
+                emptyMsg.style.fontSize = '0.85rem';
+                emptyMsg.style.color = 'var(--text-muted)';
+                emptyMsg.style.padding = '8px 16px';
+                emptyMsg.style.background = 'rgba(255, 255, 255, 0.01)';
+                emptyMsg.style.borderRadius = '8px';
+                emptyMsg.style.marginBottom = '12px';
+                emptyMsg.textContent = 'Ninguno en esta categoría';
+                list.appendChild(emptyMsg);
+                return;
+            }
+
+            items.forEach(item => {
+                const u = item.user;
+                const userCard = document.createElement('div');
+                userCard.className = 'match-card';
+                userCard.style.flexDirection = 'column';
+                userCard.style.gap = '8px';
+
+                // Generar detalles de pronósticos
+                let detailsHtml = '';
+                detailsHtml += `<div class="user-pred-details" id="details-${u.id}" style="display:none; margin-top:12px; border-top:1px solid var(--border-color); padding-top:12px; font-size:0.85rem; max-height: 300px; overflow-y: auto;">`;
+
+                detailsHtml += `<div style="font-weight:700; color:var(--primary-color); margin-bottom:8px;">Fase de Grupos (${item.groupPredCount}/${DEFAULT_MATCHES.length}):</div>`;
+                if (item.groupPredCount === 0) {
+                    detailsHtml += `<div style="color:var(--text-muted); margin-bottom:12px;">Sin pronósticos guardados en grupos.</div>`;
+                } else {
+                    detailsHtml += `<div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px; margin-bottom:12px;">`;
+                    DEFAULT_MATCHES.forEach(m => {
+                        const p = u.predictions[m.id];
+                        if (p && p.score1 !== null && p.score2 !== null) {
+                            detailsHtml += `<div style="background:rgba(255,255,255,0.02); padding:4px 8px; border-radius:6px; display:flex; justify-content:space-between; align-items:center;">
+                                <span>${m.emoji1} ${m.team1.substring(0,3)} vs ${m.team2.substring(0,3)} ${m.emoji2}</span>
+                                <strong style="color:var(--success-color);">${p.score1} - ${p.score2}</strong>
+                            </div>`;
+                        }
+                    });
+                    detailsHtml += `</div>`;
+                }
+
+                detailsHtml += `<div style="font-weight:700; color:var(--primary-color); margin-bottom:8px;">Fase Final (${item.knockoutPredCount}/32):</div>`;
+                if (item.knockoutPredCount === 0) {
+                    detailsHtml += `<div style="color:var(--text-muted);">Sin pronósticos de fase final.</div>`;
+                } else {
+                    detailsHtml += `<div style="display:grid; grid-template-columns: 1fr; gap:6px;">`;
+                    const roundLabels = { r32: 'Eliminatoria 32', r16: 'Octavos', qf: 'Cuartos', sf: 'Semis', f: 'Finales' };
+                    for (const key in u.knockoutWinner) {
+                        const [round, matchIdx] = key.split('_');
+                        const winner = u.knockoutWinner[key];
+                        const roundName = roundLabels[round] || round;
+                        detailsHtml += `<div style="background:rgba(255,255,255,0.02); padding:4px 8px; border-radius:6px; display:flex; justify-content:space-between;">
+                            <span style="color:var(--text-secondary);">${roundName} (Llave ${parseInt(matchIdx)+1})</span>
+                            <strong style="color:var(--success-color);">${getTeamEmoji(winner)} ${winner}</strong>
                         </div>`;
                     }
-                });
-                detailsHtml += `</div>`;
-            }
-
-            detailsHtml += `<div style="font-weight:700; color:var(--primary-color); margin-bottom:8px;">Fase Final (${knockoutPredCount}/32):</div>`;
-            if (knockoutPredCount === 0) {
-                detailsHtml += `<div style="color:var(--text-muted);">Sin pronósticos de fase final.</div>`;
-            } else {
-                detailsHtml += `<div style="display:grid; grid-template-columns: 1fr; gap:6px;">`;
-                const roundLabels = { r32: 'Eliminatoria 32', r16: 'Octavos', qf: 'Cuartos', sf: 'Semis', f: 'Finales' };
-                for (const key in u.knockoutWinner) {
-                    const [round, matchIdx] = key.split('_');
-                    const winner = u.knockoutWinner[key];
-                    const roundName = roundLabels[round] || round;
-                    detailsHtml += `<div style="background:rgba(255,255,255,0.02); padding:4px 8px; border-radius:6px; display:flex; justify-content:space-between;">
-                        <span style="color:var(--text-secondary);">${roundName} (Llave ${parseInt(matchIdx)+1})</span>
-                        <strong style="color:var(--success-color);">${getTeamEmoji(winner)} ${winner}</strong>
-                    </div>`;
+                    detailsHtml += `</div>`;
                 }
+
                 detailsHtml += `</div>`;
-            }
 
-            detailsHtml += `</div>`;
+                userCard.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <strong style="font-size:1rem; color:var(--text-primary);">${u.name}</strong>
+                            <div style="font-size:0.75rem; color:var(--text-secondary);">${u.dept}</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <span class="match-status-badge ${colorClass}" style="display:inline-block; margin-bottom:4px;">${statusLabel}</span>
+                            <div style="font-size:0.75rem; color:var(--text-secondary);">Grupos: ${item.groupPredCount}/${DEFAULT_MATCHES.length}</div>
+                            <div style="font-size:0.75rem; color:var(--text-secondary);">Finales: ${item.knockoutPredCount}/32</div>
+                        </div>
+                    </div>
+                    <div style="display:flex; justify-content:flex-end; margin-top:8px;">
+                        <button class="btn btn-secondary btn-sm" onclick="toggleUserPredDetails('${u.id}', this)" style="padding:4px 10px; font-size:0.75rem;">Ver Pronósticos 🔽</button>
+                    </div>
+                    ${detailsHtml}
+                `;
+                list.appendChild(userCard);
+            });
+        };
 
-            userCard.innerHTML = `
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <div>
-                        <strong style="font-size:1rem; color:var(--text-primary);">${u.name}</strong>
-                        <div style="font-size:0.75rem; color:var(--text-secondary);">${u.dept}</div>
-                    </div>
-                    <div style="text-align:right;">
-                        <div style="font-size:0.8rem; font-weight:700; color:var(--success-color);">Grupos: ${groupPredCount}/${DEFAULT_MATCHES.length}</div>
-                        <div style="font-size:0.8rem; font-weight:700; color:var(--warning-color);">Finales: ${knockoutPredCount}/32</div>
-                    </div>
-                </div>
-                <div style="display:flex; justify-content:flex-end; margin-top:8px;">
-                    <button class="btn btn-secondary btn-sm" onclick="toggleUserPredDetails('${u.id}', this)" style="padding:4px 10px; font-size:0.75rem;">Ver Pronósticos 🔽</button>
-                </div>
-                ${detailsHtml}
-            `;
-            list.appendChild(userCard);
-        });
+        // Renderizar las categorías (Sin Iniciar arriba para llamar su atención, luego Incompletos y por último Completos)
+        renderUserGroup('🔴 Sin Iniciar Pronósticos', sinIniciar, 'status-pending', 'Sin Iniciar');
+        renderUserGroup('🟡 Pronósticos Incompletos', incompletos, 'status-pending', 'Incompleto');
+        renderUserGroup('🟢 Pronósticos Completados', completados, 'status-filled', 'Completo');
     } else {
         // Ocultar navegación de grupos
         if (adminGroupsNav) adminGroupsNav.style.display = 'none';
@@ -1776,6 +1849,8 @@ function logout() {
     switchPage('login');
 }
 
+let autosaveTimeout = null;
+
 // Guardar marcador del pronóstico de forma directa en el estado local
 function saveDirectPrediction(matchId, teamIndex, value) {
     const user = state.users.find(u => u.id === state.currentUser);
@@ -1816,6 +1891,34 @@ function saveDirectPrediction(matchId, teamIndex, value) {
     if (profileMatchesPredicted) {
         profileMatchesPredicted.textContent = `${predictedGroupsCount}/${DEFAULT_MATCHES.length}`;
     }
+
+    // AUTO-GUARDADO DE CORTO PLAZO (Debounce de 800ms)
+    const saveBtn = document.getElementById('headerSavePredictionsBtn');
+    if (saveBtn) {
+        saveBtn.textContent = '⏳';
+        saveBtn.style.opacity = '0.7';
+    }
+    
+    if (autosaveTimeout) clearTimeout(autosaveTimeout);
+    autosaveTimeout = setTimeout(async () => {
+        try {
+            await saveUsersToStorage();
+            if (saveBtn) {
+                saveBtn.textContent = '✅';
+                setTimeout(() => {
+                    if (saveBtn && saveBtn.textContent === '✅') {
+                        saveBtn.textContent = '💾';
+                        saveBtn.style.opacity = '1';
+                    }
+                }, 2000);
+            }
+        } catch (e) {
+            console.error("Error al auto-guardar en Firebase:", e);
+            if (saveBtn) {
+                saveBtn.textContent = '❌';
+            }
+        }
+    }, 800);
 }
 
 // Guardar todos los pronósticos modificados en Firebase
