@@ -1,89 +1,89 @@
 // Datos iniciales de partidos de la Fase de Grupos (Mundial 2026)
 const DEFAULT_MATCHES = [
     // Grupo A
-    { id: 'A1', group: 'A', team1: 'México', emoji1: '🇲🇽', team2: 'Sudáfrica', emoji2: '🇿🇦', date: '11 de junio', time: '17:00' },
+    { id: 'A1', group: 'A', team1: 'México', emoji1: '🇲🇽', team2: 'Sudáfrica', emoji2: '🇿🇦', date: '11 de junio', time: '13:00' },
     { id: 'A2', group: 'A', team1: 'Corea del Sur', emoji1: '🇰🇷', team2: 'Chequia', emoji2: '🇨🇿', date: '11 de junio', time: '20:00' },
-    { id: 'A3', group: 'A', team1: 'México', emoji1: '🇲🇽', team2: 'Corea del Sur', emoji2: '🇰🇷', date: '19 de junio', time: '13:00' },
-    { id: 'A4', group: 'A', team1: 'Sudáfrica', emoji1: '🇿🇦', team2: 'Chequia', emoji2: '🇨🇿', date: '19 de junio', time: '16:00' },
-    { id: 'A5', group: 'A', team1: 'México', emoji1: '🇲🇽', team2: 'Chequia', emoji2: '🇨🇿', date: '27 de junio', time: '13:00' },
-    { id: 'A6', group: 'A', team1: 'Sudáfrica', emoji1: '🇿🇦', team2: 'Corea del Sur', emoji2: '🇰🇷', date: '27 de junio', time: '13:00' },
+    { id: 'A3', group: 'A', team1: 'México', emoji1: '🇲🇽', team2: 'Corea del Sur', emoji2: '🇰🇷', date: '18 de junio', time: '19:00' },
+    { id: 'A4', group: 'A', team1: 'Sudáfrica', emoji1: '🇿🇦', team2: 'Chequia', emoji2: '🇨🇿', date: '18 de junio', time: '10:00' },
+    { id: 'A5', group: 'A', team1: 'México', emoji1: '🇲🇽', team2: 'Chequia', emoji2: '🇨🇿', date: '24 de junio', time: '19:00' },
+    { id: 'A6', group: 'A', team1: 'Sudáfrica', emoji1: '🇿🇦', team2: 'Corea del Sur', emoji2: '🇰🇷', date: '24 de junio', time: '19:00' },
     // Grupo B
     { id: 'B1', group: 'B', team1: 'Canadá', emoji1: '🇨🇦', team2: 'Bosnia y Herzegovina', emoji2: '🇧🇦', date: '12 de junio', time: '13:00' },
     { id: 'B2', group: 'B', team1: 'Catar', emoji1: '🇶🇦', team2: 'Suiza', emoji2: '🇨🇭', date: '13 de junio', time: '13:00' },
-    { id: 'B3', group: 'B', team1: 'Canadá', emoji1: '🇨🇦', team2: 'Catar', emoji2: '🇶🇦', date: '19 de junio', time: '19:00' },
-    { id: 'B4', group: 'B', team1: 'Bosnia y Herzegovina', emoji1: '🇧🇦', team2: 'Suiza', emoji2: '🇨🇭', date: '20 de junio', time: '13:00' },
-    { id: 'B5', group: 'B', team1: 'Canadá', emoji1: '🇨🇦', team2: 'Suiza', emoji2: '🇨🇭', date: '27 de junio', time: '16:00' },
-    { id: 'B6', group: 'B', team1: 'Bosnia y Herzegovina', emoji1: '🇧🇦', team2: 'Catar', emoji2: '🇶🇦', date: '27 de junio', time: '16:00' },
+    { id: 'B3', group: 'B', team1: 'Canadá', emoji1: '🇨🇦', team2: 'Catar', emoji2: '🇶🇦', date: '18 de junio', time: '16:00' },
+    { id: 'B4', group: 'B', team1: 'Bosnia y Herzegovina', emoji1: '🇧🇦', team2: 'Suiza', emoji2: '🇨🇭', date: '18 de junio', time: '13:00' },
+    { id: 'B5', group: 'B', team1: 'Canadá', emoji1: '🇨🇦', team2: 'Suiza', emoji2: '🇨🇭', date: '24 de junio', time: '13:00' },
+    { id: 'B6', group: 'B', team1: 'Bosnia y Herzegovina', emoji1: '🇧🇦', team2: 'Catar', emoji2: '🇶🇦', date: '24 de junio', time: '13:00' },
     // Grupo C
     { id: 'C1', group: 'C', team1: 'Brasil', emoji1: '🇧🇷', team2: 'Marruecos', emoji2: '🇲🇦', date: '13 de junio', time: '16:00' },
-    { id: 'C2', group: 'C', team1: 'Haití', emoji1: '🇭🇹', team2: 'Escocia', emoji2: '🏴󠁧󠁢󠁳󠁣󠁴󠁿', date: '13 de junio', time: '20:00' },
-    { id: 'C3', group: 'C', team1: 'Brasil', emoji1: '🇧🇷', team2: 'Haití', emoji2: '🇭🇹', date: '20 de junio', time: '16:00' },
-    { id: 'C4', group: 'C', team1: 'Marruecos', emoji1: '🇲🇦', team2: 'Escocia', emoji2: '🏴󠁧󠁢󠁳󠁣󠁴󠁿', date: '20 de junio', time: '19:00' },
-    { id: 'C5', group: 'C', team1: 'Brasil', emoji1: '🇧🇷', team2: 'Escocia', emoji2: '🏴󠁧󠁢󠁳󠁣󠁴󠁿', date: '27 de junio', time: '19:00' },
-    { id: 'C6', group: 'C', team1: 'Marruecos', emoji1: '🇲🇦', team2: 'Haití', emoji2: '🇭🇹', date: '27 de junio', time: '19:00' },
+    { id: 'C2', group: 'C', team1: 'Haití', emoji1: '🇭🇹', team2: 'Escocia', emoji2: '🏴󠁧󠁢󠁳󠁣󠁴󠁿', date: '13 de junio', time: '19:00' },
+    { id: 'C3', group: 'C', team1: 'Brasil', emoji1: '🇧🇷', team2: 'Haití', emoji2: '🇭🇹', date: '19 de junio', time: '18:30' },
+    { id: 'C4', group: 'C', team1: 'Marruecos', emoji1: '🇲🇦', team2: 'Escocia', emoji2: '🏴󠁧󠁢󠁳󠁣󠁴󠁿', date: '19 de junio', time: '16:00' },
+    { id: 'C5', group: 'C', team1: 'Brasil', emoji1: '🇧🇷', team2: 'Escocia', emoji2: '🏴󠁧󠁢󠁳󠁣󠁴󠁿', date: '24 de junio', time: '16:00' },
+    { id: 'C6', group: 'C', team1: 'Marruecos', emoji1: '🇲🇦', team2: 'Haití', emoji2: '🇭🇹', date: '24 de junio', time: '16:00' },
     // Grupo D
     { id: 'D1', group: 'D', team1: 'Estados Unidos', emoji1: '🇺🇸', team2: 'Paraguay', emoji2: '🇵🇾', date: '12 de junio', time: '19:00' },
-    { id: 'D2', group: 'D', team1: 'Australia', emoji1: '🇦🇺', team2: 'Turquía', emoji2: '🇹🇷', date: '13 de junio', time: '19:00' },
-    { id: 'D3', group: 'D', team1: 'Estados Unidos', emoji1: '🇺🇸', team2: 'Australia', emoji2: '🇦🇺', date: '21 de junio', time: '13:00' },
-    { id: 'D4', group: 'D', team1: 'Paraguay', emoji1: '🇵🇾', team2: 'Turquía', emoji2: '🇹🇷', date: '21 de junio', time: '16:00' },
-    { id: 'D5', group: 'D', team1: 'Estados Unidos', emoji1: '🇺🇸', team2: 'Turquía', emoji2: '🇹🇷', date: '27 de junio', time: '22:00' },
-    { id: 'D6', group: 'D', team1: 'Paraguay', emoji1: '🇵🇾', team2: 'Australia', emoji2: '🇦🇺', date: '27 de junio', time: '22:00' },
+    { id: 'D2', group: 'D', team1: 'Australia', emoji1: '🇦🇺', team2: 'Turquía', emoji2: '🇹🇷', date: '13 de junio', time: '22:00' },
+    { id: 'D3', group: 'D', team1: 'Estados Unidos', emoji1: '🇺🇸', team2: 'Australia', emoji2: '🇦🇺', date: '19 de junio', time: '13:00' },
+    { id: 'D4', group: 'D', team1: 'Paraguay', emoji1: '🇵🇾', team2: 'Turquía', emoji2: '🇹🇷', date: '19 de junio', time: '21:00' },
+    { id: 'D5', group: 'D', team1: 'Estados Unidos', emoji1: '🇺🇸', team2: 'Turquía', emoji2: '🇹🇷', date: '25 de junio', time: '20:00' },
+    { id: 'D6', group: 'D', team1: 'Paraguay', emoji1: '🇵🇾', team2: 'Australia', emoji2: '🇦🇺', date: '25 de junio', time: '20:00' },
     // Grupo E
-    { id: 'E1', group: 'E', team1: 'Alemania', emoji1: '🇩🇪', team2: 'Curazao', emoji2: '🇨🇼', date: '14 de junio', time: '13:00' },
-    { id: 'E2', group: 'E', team1: 'Costa de Marfil', emoji1: '🇨🇮', team2: 'Ecuador', emoji2: '🇪🇨', date: '14 de junio', time: '16:00' },
-    { id: 'E3', group: 'E', team1: 'Alemania', emoji1: '🇩🇪', team2: 'Costa de Marfil', emoji2: '🇨🇮', date: '21 de junio', time: '19:00' },
-    { id: 'E4', group: 'E', team1: 'Curazao', emoji1: '🇨🇼', team2: 'Ecuador', emoji2: '🇪🇨', date: '22 de junio', time: '13:00' },
-    { id: 'E5', group: 'E', team1: 'Alemania', emoji1: '🇩🇪', team2: 'Ecuador', emoji2: '🇪🇨', date: '28 de junio', time: '13:00' },
-    { id: 'E6', group: 'E', team1: 'Curazao', emoji1: '🇨🇼', team2: 'Costa de Marfil', emoji2: '🇨🇮', date: '28 de junio', time: '13:00' },
+    { id: 'E1', group: 'E', team1: 'Alemania', emoji1: '🇩🇪', team2: 'Curazao', emoji2: '🇨🇼', date: '14 de junio', time: '11:00' },
+    { id: 'E2', group: 'E', team1: 'Costa de Marfil', emoji1: '🇨🇮', team2: 'Ecuador', emoji2: '🇪🇨', date: '14 de junio', time: '17:00' },
+    { id: 'E3', group: 'E', team1: 'Alemania', emoji1: '🇩🇪', team2: 'Costa de Marfil', emoji2: '🇨🇮', date: '20 de junio', time: '14:00' },
+    { id: 'E4', group: 'E', team1: 'Curazao', emoji1: '🇨🇼', team2: 'Ecuador', emoji2: '🇪🇨', date: '20 de junio', time: '18:00' },
+    { id: 'E5', group: 'E', team1: 'Alemania', emoji1: '🇩🇪', team2: 'Ecuador', emoji2: '🇪🇨', date: '25 de junio', time: '14:00' },
+    { id: 'E6', group: 'E', team1: 'Curazao', emoji1: '🇨🇼', team2: 'Costa de Marfil', emoji2: '🇨🇮', date: '25 de junio', time: '14:00' },
     // Grupo F
-    { id: 'F1', group: 'F', team1: 'Países Bajos', emoji1: '🇳🇱', team2: 'Japón', emoji2: '🇯🇵', date: '14 de junio', time: '19:00' },
-    { id: 'F2', group: 'F', team1: 'Suecia', emoji1: '🇸🇪', team2: 'Túnez', emoji2: '🇹🇳', date: '15 de junio', time: '13:00' },
-    { id: 'F3', group: 'F', team1: 'Países Bajos', emoji1: '🇳🇱', team2: 'Suecia', emoji2: '🇸🇪', date: '22 de junio', time: '16:00' },
-    { id: 'F4', group: 'F', team1: 'Japón', emoji1: '🇯🇵', team2: 'Túnez', emoji2: '🇹🇳', date: '22 de junio', time: '19:00' },
-    { id: 'F5', group: 'F', team1: 'Países Bajos', emoji1: '🇳🇱', team2: 'Túnez', emoji2: '🇹🇳', date: '28 de junio', time: '16:00' },
-    { id: 'F6', group: 'F', team1: 'Japón', emoji1: '🇯🇵', team2: 'Suecia', emoji2: '🇸🇪', date: '28 de junio', time: '16:00' },
+    { id: 'F1', group: 'F', team1: 'Países Bajos', emoji1: '🇳🇱', team2: 'Japón', emoji2: '🇯🇵', date: '14 de junio', time: '14:00' },
+    { id: 'F2', group: 'F', team1: 'Suecia', emoji1: '🇸🇪', team2: 'Túnez', emoji2: '🇹🇳', date: '14 de junio', time: '20:00' },
+    { id: 'F3', group: 'F', team1: 'Países Bajos', emoji1: '🇳🇱', team2: 'Suecia', emoji2: '🇸🇪', date: '20 de junio', time: '11:00' },
+    { id: 'F4', group: 'F', team1: 'Japón', emoji1: '🇯🇵', team2: 'Túnez', emoji2: '🇹🇳', date: '20 de junio', time: '22:00' },
+    { id: 'F5', group: 'F', team1: 'Países Bajos', emoji1: '🇳🇱', team2: 'Túnez', emoji2: '🇹🇳', date: '25 de junio', time: '17:00' },
+    { id: 'F6', group: 'F', team1: 'Japón', emoji1: '🇯🇵', team2: 'Suecia', emoji2: '🇸🇪', date: '25 de junio', time: '17:00' },
     // Grupo G
-    { id: 'G1', group: 'G', team1: 'Bélgica', emoji1: '🇧🇪', team2: 'Egipto', emoji2: '🇪🇬', date: '15 de junio', time: '16:00' },
+    { id: 'G1', group: 'G', team1: 'Bélgica', emoji1: '🇧🇪', team2: 'Egipto', emoji2: '🇪🇬', date: '15 de junio', time: '13:00' },
     { id: 'G2', group: 'G', team1: 'Irán', emoji1: '🇮🇷', team2: 'Nueva Zelanda', emoji2: '🇳🇿', date: '15 de junio', time: '19:00' },
-    { id: 'G3', group: 'G', team1: 'Bélgica', emoji1: '🇧🇪', team2: 'Irán', emoji2: '🇮🇷', date: '23 de junio', time: '13:00' },
-    { id: 'G4', group: 'G', team1: 'Egipto', emoji1: '🇪🇬', team2: 'Nueva Zelanda', emoji2: '🇳🇿', date: '23 de junio', time: '16:00' },
-    { id: 'G5', group: 'G', team1: 'Bélgica', emoji1: '🇧🇪', team2: 'Nueva Zelanda', emoji2: '🇳🇿', date: '28 de junio', time: '19:00' },
-    { id: 'G6', group: 'G', team1: 'Egipto', emoji1: '🇪🇬', team2: 'Irán', emoji2: '🇮🇷', date: '28 de junio', time: '19:00' },
+    { id: 'G3', group: 'G', team1: 'Bélgica', emoji1: '🇧🇪', team2: 'Irán', emoji2: '🇮🇷', date: '21 de junio', time: '13:00' },
+    { id: 'G4', group: 'G', team1: 'Egipto', emoji1: '🇪🇬', team2: 'Nueva Zelanda', emoji2: '🇳🇿', date: '21 de junio', time: '19:00' },
+    { id: 'G5', group: 'G', team1: 'Bélgica', emoji1: '🇧🇪', team2: 'Nueva Zelanda', emoji2: '🇳🇿', date: '26 de junio', time: '21:00' },
+    { id: 'G6', group: 'G', team1: 'Egipto', emoji1: '🇪🇬', team2: 'Irán', emoji2: '🇮🇷', date: '26 de junio', time: '21:00' },
     // Grupo H
-    { id: 'H1', group: 'H', team1: 'España', emoji1: '🇪🇸', team2: 'Cabo Verde', emoji2: '🇨🇻', date: '16 de junio', time: '13:00' },
-    { id: 'H2', group: 'H', team1: 'Arabia Saudita', emoji1: '🇸🇦', team2: 'Uruguay', emoji2: '🇺🇾', date: '16 de junio', time: '16:00' },
-    { id: 'H3', group: 'H', team1: 'España', emoji1: '🇪🇸', team2: 'Arabia Saudita', emoji2: '🇸🇦', date: '23 de junio', time: '19:00' },
-    { id: 'H4', group: 'H', team1: 'Cabo Verde', emoji1: '🇨🇻', team2: 'Uruguay', emoji2: '🇺🇾', date: '24 de junio', time: '13:00' },
-    { id: 'H5', group: 'H', team1: 'España', emoji1: '🇪🇸', team2: 'Uruguay', emoji2: '🇺🇾', date: '29 de junio', time: '13:00' },
-    { id: 'H6', group: 'H', team1: 'Cabo Verde', emoji1: '🇨🇻', team2: 'Arabia Saudita', emoji2: '🇸🇦', date: '29 de junio', time: '13:00' },
+    { id: 'H1', group: 'H', team1: 'España', emoji1: '🇪🇸', team2: 'Cabo Verde', emoji2: '🇨🇻', date: '15 de junio', time: '10:00' },
+    { id: 'H2', group: 'H', team1: 'Arabia Saudita', emoji1: '🇸🇦', team2: 'Uruguay', emoji2: '🇺🇾', date: '15 de junio', time: '16:00' },
+    { id: 'H3', group: 'H', team1: 'España', emoji1: '🇪🇸', team2: 'Arabia Saudita', emoji2: '🇸🇦', date: '21 de junio', time: '10:00' },
+    { id: 'H4', group: 'H', team1: 'Cabo Verde', emoji1: '🇨🇻', team2: 'Uruguay', emoji2: '🇺🇾', date: '21 de junio', time: '16:00' },
+    { id: 'H5', group: 'H', team1: 'España', emoji1: '🇪🇸', team2: 'Uruguay', emoji2: '🇺🇾', date: '26 de junio', time: '18:00' },
+    { id: 'H6', group: 'H', team1: 'Cabo Verde', emoji1: '🇨🇻', team2: 'Arabia Saudita', emoji2: '🇸🇦', date: '26 de junio', time: '18:00' },
     // Grupo I
-    { id: 'I1', group: 'I', team1: 'Francia', emoji1: '🇫🇷', team2: 'Senegal', emoji2: '🇸🇳', date: '16 de junio', time: '19:00' },
-    { id: 'I2', group: 'I', team1: 'Irak', emoji1: '🇮🇶', team2: 'Noruega', emoji2: '🇳🇴', date: '17 de junio', time: '13:00' },
-    { id: 'I3', group: 'I', team1: 'Francia', emoji1: '🇫🇷', team2: 'Irak', emoji2: '🇮🇶', date: '24 de junio', time: '16:00' },
-    { id: 'I4', group: 'I', team1: 'Senegal', emoji1: '🇸🇳', team2: 'Noruega', emoji2: '🇳🇴', date: '24 de junio', time: '19:00' },
-    { id: 'I5', group: 'I', team1: 'Francia', emoji1: '🇫🇷', team2: 'Noruega', emoji2: '🇳🇴', date: '29 de junio', time: '16:00' },
-    { id: 'I6', group: 'I', team1: 'Senegal', emoji1: '🇸🇳', team2: 'Irak', emoji2: '🇮🇶', date: '29 de junio', time: '16:00' },
+    { id: 'I1', group: 'I', team1: 'Francia', emoji1: '🇫🇷', team2: 'Senegal', emoji2: '🇸🇳', date: '16 de junio', time: '13:00' },
+    { id: 'I2', group: 'I', team1: 'Irak', emoji1: '🇮🇶', team2: 'Noruega', emoji2: '🇳🇴', date: '16 de junio', time: '16:00' },
+    { id: 'I3', group: 'I', team1: 'Francia', emoji1: '🇫🇷', team2: 'Irak', emoji2: '🇮🇶', date: '22 de junio', time: '15:00' },
+    { id: 'I4', group: 'I', team1: 'Senegal', emoji1: '🇸🇳', team2: 'Noruega', emoji2: '🇳🇴', date: '22 de junio', time: '18:00' },
+    { id: 'I5', group: 'I', team1: 'Francia', emoji1: '🇫🇷', team2: 'Noruega', emoji2: '🇳🇴', date: '26 de junio', time: '13:00' },
+    { id: 'I6', group: 'I', team1: 'Senegal', emoji1: '🇸🇳', team2: 'Irak', emoji2: '🇮🇶', date: '26 de junio', time: '13:00' },
     // Grupo J
-    { id: 'J1', group: 'J', team1: 'Argentina', emoji1: '🇦🇷', team2: 'Argelia', emoji2: '🇩🇿', date: '17 de junio', time: '16:00' },
-    { id: 'J2', group: 'J', team1: 'Austria', emoji1: '🇦🇹', team2: 'Jordania', emoji2: '🇯🇴', date: '17 de junio', time: '19:00' },
-    { id: 'J3', group: 'J', team1: 'Argentina', emoji1: '🇦🇷', team2: 'Austria', emoji2: '🇦🇹', date: '25 de junio', time: '13:00' },
-    { id: 'J4', group: 'J', team1: 'Argelia', emoji1: '🇩🇿', team2: 'Jordania', emoji2: '🇯🇴', date: '25 de junio', time: '16:00' },
-    { id: 'J5', group: 'J', team1: 'Argentina', emoji1: '🇦🇷', team2: 'Jordania', emoji2: '🇯🇴', date: '29 de junio', time: '19:00' },
-    { id: 'J6', group: 'J', team1: 'Argelia', emoji1: '🇩🇿', team2: 'Austria', emoji2: '🇦🇹', date: '29 de junio', time: '19:00' },
+    { id: 'J1', group: 'J', team1: 'Argentina', emoji1: '🇦🇷', team2: 'Argelia', emoji2: '🇩🇿', date: '16 de junio', time: '19:00' },
+    { id: 'J2', group: 'J', team1: 'Austria', emoji1: '🇦🇹', team2: 'Jordania', emoji2: '🇯🇴', date: '16 de junio', time: '22:00' },
+    { id: 'J3', group: 'J', team1: 'Argentina', emoji1: '🇦🇷', team2: 'Austria', emoji2: '🇦🇹', date: '22 de junio', time: '11:00' },
+    { id: 'J4', group: 'J', team1: 'Argelia', emoji1: '🇩🇿', team2: 'Jordania', emoji2: '🇯🇴', date: '22 de junio', time: '21:00' },
+    { id: 'J5', group: 'J', team1: 'Argentina', emoji1: '🇦🇷', team2: 'Jordania', emoji2: '🇯🇴', date: '27 de junio', time: '20:00' },
+    { id: 'J6', group: 'J', team1: 'Argelia', emoji1: '🇩🇿', team2: 'Austria', emoji2: '🇦🇹', date: '27 de junio', time: '20:00' },
     // Grupo K
-    { id: 'K1', group: 'K', team1: 'Portugal', emoji1: '🇵🇹', team2: 'RD Congo', emoji2: '🇨🇩', date: '18 de junio', time: '13:00' },
-    { id: 'K2', group: 'K', team1: 'Uzbekistán', emoji1: '🇺🇿', team2: 'Colombia', emoji2: '🇨🇴', date: '18 de junio', time: '16:00' },
-    { id: 'K3', group: 'K', team1: 'Portugal', emoji1: '🇵🇹', team2: 'Uzbekistán', emoji2: '🇺🇿', date: '25 de junio', time: '19:00' },
-    { id: 'K4', group: 'K', team1: 'RD Congo', emoji1: '🇨🇩', team2: 'Colombia', emoji2: '🇨🇴', date: '26 de junio', time: '13:00' },
-    { id: 'K5', group: 'K', team1: 'Portugal', emoji1: '🇵🇹', team2: 'Colombia', emoji2: '🇨🇴', date: '29 de junio', time: '22:00' },
-    { id: 'K6', group: 'K', team1: 'RD Congo', emoji1: '🇨🇩', team2: 'Uzbekistán', emoji2: '🇺🇿', date: '29 de junio', time: '22:00' },
+    { id: 'K1', group: 'K', team1: 'Portugal', emoji1: '🇵🇹', team2: 'RD Congo', emoji2: '🇨🇩', date: '17 de junio', time: '11:00' },
+    { id: 'K2', group: 'K', team1: 'Uzbekistán', emoji1: '🇺🇿', team2: 'Colombia', emoji2: '🇨🇴', date: '17 de junio', time: '20:00' },
+    { id: 'K3', group: 'K', team1: 'Portugal', emoji1: '🇵🇹', team2: 'Uzbekistán', emoji2: '🇺🇿', date: '23 de junio', time: '11:00' },
+    { id: 'K4', group: 'K', team1: 'RD Congo', emoji1: '🇨🇩', team2: 'Colombia', emoji2: '🇨🇴', date: '23 de junio', time: '20:00' },
+    { id: 'K5', group: 'K', team1: 'Portugal', emoji1: '🇵🇹', team2: 'Colombia', emoji2: '🇨🇴', date: '27 de junio', time: '17:30' },
+    { id: 'K6', group: 'K', team1: 'RD Congo', emoji1: '🇨🇩', team2: 'Uzbekistán', emoji2: '🇺🇿', date: '27 de junio', time: '17:30' },
     // Grupo L
-    { id: 'L1', group: 'L', team1: 'Inglaterra', emoji1: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', team2: 'Croacia', emoji2: '🇭🇷', date: '18 de junio', time: '19:00' },
-    { id: 'L2', group: 'L', team1: 'Ghana', emoji1: '🇬🇭', team2: 'Panamá', emoji2: '🇵🇦', date: '18 de junio', time: '22:00' },
-    { id: 'L3', group: 'L', team1: 'Inglaterra', emoji1: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', team2: 'Ghana', emoji2: '🇬🇭', date: '26 de junio', time: '16:00' },
-    { id: 'L4', group: 'L', team1: 'Croacia', emoji1: '🇭🇷', team2: 'Panamá', emoji2: '🇵🇦', date: '26 de junio', time: '19:00' },
-    { id: 'L5', group: 'L', team1: 'Inglaterra', emoji1: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', team2: 'Panamá', emoji2: '🇵🇦', date: '29 de junio', time: '22:00' },
-    { id: 'L6', group: 'L', team1: 'Croacia', emoji1: '🇭🇷', team2: 'Ghana', emoji2: '🇬🇭', date: '29 de junio', time: '22:00' }
+    { id: 'L1', group: 'L', team1: 'Inglaterra', emoji1: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', team2: 'Croacia', emoji2: '🇭🇷', date: '17 de junio', time: '14:00' },
+    { id: 'L2', group: 'L', team1: 'Ghana', emoji1: '🇬🇭', team2: 'Panamá', emoji2: '🇵🇦', date: '17 de junio', time: '17:00' },
+    { id: 'L3', group: 'L', team1: 'Inglaterra', emoji1: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', team2: 'Ghana', emoji2: '🇬🇭', date: '23 de junio', time: '14:00' },
+    { id: 'L4', group: 'L', team1: 'Croacia', emoji1: '🇭🇷', team2: 'Panamá', emoji2: '🇵🇦', date: '23 de junio', time: '17:00' },
+    { id: 'L5', group: 'L', team1: 'Inglaterra', emoji1: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', team2: 'Panamá', emoji2: '🇵🇦', date: '27 de junio', time: '15:00' },
+    { id: 'L6', group: 'L', team1: 'Croacia', emoji1: '🇭🇷', team2: 'Ghana', emoji2: '🇬🇭', date: '27 de junio', time: '15:00' }
 ];
 
 // Estructura de Fase Final (Definición de llaves)
@@ -171,10 +171,41 @@ const DEFAULT_GROUP_STANDINGS = {
 };
 
 // Fecha límite para votaciones de la Fase de Grupos
-const GROUP_STAGE_LOCK_TIME = new Date('2026-06-11T12:00:00-06:00');
+const FIRST_STAGE_LOCK_TIME = new Date('2026-06-11T12:00:00-06:00');
+const SECOND_STAGE_LOCK_TIME = new Date('2026-06-20T00:00:00-06:00'); // Antes de las 12:00 AM (medianoche) del 20 de junio
 
-function isGroupStageLocked() {
-    return new Date() >= GROUP_STAGE_LOCK_TIME;
+let cachedFirst36Ids = null;
+
+function parseMatchDate(dateStr, timeStr) {
+    const day = parseInt(dateStr);
+    const [hours, minutes] = timeStr.split(':').map(Number);
+    return new Date(2026, 5, day, hours, minutes);
+}
+
+function getFirst36MatchIds() {
+    const sorted = [...DEFAULT_MATCHES].sort((a, b) => {
+        const dateA = parseMatchDate(a.date, a.time);
+        const dateB = parseMatchDate(b.date, b.time);
+        return dateA - dateB;
+    });
+    return sorted.slice(0, 36).map(m => m.id);
+}
+
+function isMatchLocked(matchId) {
+    if (!cachedFirst36Ids) {
+        cachedFirst36Ids = getFirst36MatchIds();
+    }
+    const isFirst36 = cachedFirst36Ids.includes(matchId);
+    const now = new Date();
+    if (isFirst36) {
+        return now >= FIRST_STAGE_LOCK_TIME;
+    } else {
+        return now >= SECOND_STAGE_LOCK_TIME;
+    }
+}
+
+function isAllGroupStageLocked() {
+    return new Date() >= SECOND_STAGE_LOCK_TIME;
 }
 
 // Variables de Estado global
@@ -601,7 +632,7 @@ function renderAll() {
     // Control de visibilidad del botón de Guardar en la cabecera
     const headerSaveBtn = document.getElementById('headerSavePredictionsBtn');
     if (headerSaveBtn) {
-        if (user && !user.isAdmin && !isGroupStageLocked() && state.activePage === 'groups') {
+        if (user && !user.isAdmin && !isAllGroupStageLocked() && state.activePage === 'groups') {
             headerSaveBtn.style.display = 'flex';
         } else {
             headerSaveBtn.style.display = 'none';
@@ -674,23 +705,54 @@ function renderGroupMatches() {
         filteredMatches = DEFAULT_MATCHES.filter(m => m.group === state.currentGroup);
     }
     
+    // Ordenar cronológicamente
+    filteredMatches = [...filteredMatches].sort((a, b) => {
+        const dateA = parseMatchDate(a.date, a.time);
+        const dateB = parseMatchDate(b.date, b.time);
+        return dateA - dateB;
+    });
+    
     const user = state.users.find(u => u.id === state.currentUser);
     if (!user) return;
 
     // Agregar banner de estado de la votación
-    const locked = isGroupStageLocked();
+    const now = new Date();
+    const isFirstStageLocked = now >= FIRST_STAGE_LOCK_TIME;
+    const isSecondStageLocked = now >= SECOND_STAGE_LOCK_TIME;
     const banner = document.createElement('div');
-    if (locked) {
+    
+    if (isSecondStageLocked) {
         banner.className = 'lockout-banner locked';
         banner.innerHTML = `
             <span class="lockout-icon">🔒</span>
             <div class="lockout-content">
                 <div class="lockout-title">Votaciones de Grupos Cerradas</div>
-                <div class="lockout-desc">El plazo para pronosticar la fase de grupos finalizó el jueves 11 de junio a las 12:00 PM. Puedes ver tus pronósticos y marcadores oficiales.</div>
+                <div class="lockout-desc">El plazo para pronosticar todos los partidos de la fase de grupos ha finalizado. Puedes ver tus pronósticos y marcadores oficiales.</div>
+            </div>
+        `;
+    } else if (isFirstStageLocked) {
+        const diffMs = SECOND_STAGE_LOCK_TIME - now;
+        const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+        const diffDays = Math.floor(diffHours / 24);
+        let timeRemainingText = '';
+        if (diffDays > 0) {
+            timeRemainingText = `${diffDays} día(s) y ${diffHours % 24} hora(s)`;
+        } else {
+            timeRemainingText = `${diffHours} hora(s)`;
+        }
+        
+        banner.className = 'lockout-banner active';
+        banner.style.background = 'rgba(245, 158, 11, 0.08)';
+        banner.style.borderColor = 'rgba(245, 158, 11, 0.2)';
+        banner.innerHTML = `
+            <span class="lockout-icon">🔓</span>
+            <div class="lockout-content">
+                <div class="lockout-title">Votaciones Parcialmente Abiertas</div>
+                <div class="lockout-desc">Los primeros 36 partidos se han bloqueado. Los últimos 36 partidos siguen abiertos para pronosticar. <strong style="color:var(--warning-color);">Faltan ${timeRemainingText} para el cierre definitivo (20 de junio a las 12:00 AM).</strong></div>
             </div>
         `;
     } else {
-        const diffMs = GROUP_STAGE_LOCK_TIME - new Date();
+        const diffMs = FIRST_STAGE_LOCK_TIME - now;
         const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
         const diffDays = Math.floor(diffHours / 24);
         let timeRemainingText = '';
@@ -699,8 +761,7 @@ function renderGroupMatches() {
         } else if (diffHours > 0) {
             timeRemainingText = `Faltan ${diffHours} hora(s) y ${Math.floor((diffMs / (1000 * 60)) % 60)} minuto(s)`;
         } else {
-            const diffMins = Math.floor(diffMs / (1000 * 60));
-            timeRemainingText = `Faltan ${diffMins} minuto(s)`;
+            timeRemainingText = `Faltan ${Math.floor(diffMs / (1000 * 60))} minuto(s)`;
         }
         
         banner.className = 'lockout-banner active';
@@ -708,7 +769,7 @@ function renderGroupMatches() {
             <span class="lockout-icon animated-icon">🔓</span>
             <div class="lockout-content">
                 <div class="lockout-title">Votaciones de Grupos Abiertas</div>
-                <div class="lockout-desc">Tienes hasta el jueves 11 de junio a las 12:00 PM para guardar tus pronósticos. <strong style="color:var(--success-color); white-space: nowrap;">(${timeRemainingText})</strong></div>
+                <div class="lockout-desc">Tienes hasta el jueves 11 de junio a las 12:00 PM para los primeros 36 partidos. <strong style="color:var(--success-color); white-space: nowrap;">(${timeRemainingText})</strong>. Los últimos 36 cierran el 20 de junio.</div>
             </div>
         `;
     }
@@ -767,7 +828,7 @@ function renderGroupMatches() {
                         <input type="number" class="score-input-direct" value="${prediction.score2 !== null ? prediction.score2 : ''}" disabled style="opacity: 0.8;">
                     </div>
                 `;
-            } else if (locked) {
+            } else if (isMatchLocked(match.id)) {
                 scoreSelectorHtml = `
                     <div class="score-selector">
                         <input type="number" class="score-input-direct" value="${prediction.score1 !== null ? prediction.score1 : ''}" disabled style="opacity: 0.7; cursor: not-allowed; background: rgba(255,255,255,0.02);">
@@ -1855,7 +1916,7 @@ let autosaveTimeout = null;
 function saveDirectPrediction(matchId, teamIndex, value) {
     const user = state.users.find(u => u.id === state.currentUser);
     if (!user || user.isAdmin) return;
-    if (isGroupStageLocked()) return; // Evitar guardar si está bloqueada la fase de grupos
+    if (isMatchLocked(matchId)) return; // Evitar guardar si está bloqueada la fase de grupos para este partido
     
     if (!user.predictions[matchId]) {
         user.predictions[matchId] = { score1: null, score2: null };
