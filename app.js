@@ -171,7 +171,7 @@ const DEFAULT_GROUP_STANDINGS = {
 };
 
 // Fecha límite para votaciones de la Fase de Grupos
-const FIRST_STAGE_LOCK_TIME = new Date('2026-06-11T13:30:00-06:00');
+const FIRST_STAGE_MIDNIGHT_LOCK_TIME = new Date('2026-06-12T00:00:00-06:00'); // Cierre hoy a las 12 AM (medianoche)
 const SECOND_STAGE_LOCK_TIME = new Date('2026-06-20T00:00:00-06:00'); // Antes de las 12:00 AM (medianoche) del 20 de junio
 
 let cachedFirst36Ids = null;
@@ -192,13 +192,18 @@ function getFirst36MatchIds() {
 }
 
 function isMatchLocked(matchId) {
+    // Los 2 partidos jugados hoy (11 de junio: A1 y A2) se bloquean de inmediato
+    if (matchId === 'A1' || matchId === 'A2') {
+        return true;
+    }
+    
     if (!cachedFirst36Ids) {
         cachedFirst36Ids = getFirst36MatchIds();
     }
     const isFirst36 = cachedFirst36Ids.includes(matchId);
     const now = new Date();
     if (isFirst36) {
-        return now >= FIRST_STAGE_LOCK_TIME;
+        return now >= FIRST_STAGE_MIDNIGHT_LOCK_TIME;
     } else {
         return now >= SECOND_STAGE_LOCK_TIME;
     }
@@ -717,7 +722,7 @@ function renderGroupMatches() {
 
     // Agregar banner de estado de la votación
     const now = new Date();
-    const isFirstStageLocked = now >= FIRST_STAGE_LOCK_TIME;
+    const isFirstStageMidnightLocked = now >= FIRST_STAGE_MIDNIGHT_LOCK_TIME;
     const isSecondStageLocked = now >= SECOND_STAGE_LOCK_TIME;
     const banner = document.createElement('div');
     
@@ -730,7 +735,7 @@ function renderGroupMatches() {
                 <div class="lockout-desc">El plazo para pronosticar todos los partidos de la fase de grupos ha finalizado. Puedes ver tus pronósticos y marcadores oficiales.</div>
             </div>
         `;
-    } else if (isFirstStageLocked) {
+    } else if (isFirstStageMidnightLocked) {
         const diffMs = SECOND_STAGE_LOCK_TIME - now;
         const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
         const diffDays = Math.floor(diffHours / 24);
@@ -752,24 +757,16 @@ function renderGroupMatches() {
             </div>
         `;
     } else {
-        const diffMs = FIRST_STAGE_LOCK_TIME - now;
+        const diffMs = FIRST_STAGE_MIDNIGHT_LOCK_TIME - now;
         const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-        const diffDays = Math.floor(diffHours / 24);
-        let timeRemainingText = '';
-        if (diffDays > 0) {
-            timeRemainingText = `Faltan ${diffDays} día(s) y ${diffHours % 24} hora(s)`;
-        } else if (diffHours > 0) {
-            timeRemainingText = `Faltan ${diffHours} hora(s) y ${Math.floor((diffMs / (1000 * 60)) % 60)} minuto(s)`;
-        } else {
-            timeRemainingText = `Faltan ${Math.floor(diffMs / (1000 * 60))} minuto(s)`;
-        }
+        const diffMins = Math.floor((diffMs / (1000 * 60)) % 60);
         
         banner.className = 'lockout-banner active';
         banner.innerHTML = `
             <span class="lockout-icon animated-icon">🔓</span>
             <div class="lockout-content">
-                <div class="lockout-title">Votaciones de Grupos Abiertas</div>
-                <div class="lockout-desc">Tienes hasta el jueves 11 de junio a las 12:00 PM para los primeros 36 partidos. <strong style="color:var(--success-color); white-space: nowrap;">(${timeRemainingText})</strong>. Los últimos 36 cierran el 20 de junio.</div>
+                <div class="lockout-title">Votaciones de Grupos Habilitadas</div>
+                <div class="lockout-desc">Los 2 partidos de hoy (11 de junio) ya están cerrados. Tienes hasta hoy a las 12:00 AM (medianoche) para pronosticar el resto del primer bloque de partidos. <strong style="color:var(--success-color); white-space: nowrap;">(Faltan ${diffHours} horas y ${diffMins} minutos)</strong>. Los últimos 36 partidos cierran el 20 de junio.</div>
             </div>
         `;
     }
