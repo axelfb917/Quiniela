@@ -217,6 +217,7 @@ function isAllGroupStageLocked() {
 let state = {
     activePage: 'profile',
     currentGroup: 'ALL',
+    currentRound: 1, // 1 para Ronda 1 (primeros 36), 2 para Ronda 2 (últimos 36)
     currentKnockoutRound: 'r32',
     adminPhase: 'groups',
     currentUser: null,
@@ -410,6 +411,7 @@ async function loadDatabase() {
             // Recuperar el estado guardado de la navegación/filtros
             const savedPage = localStorage.getItem('iesa_active_page') || 'profile';
             state.currentGroup = localStorage.getItem('iesa_current_group') || 'ALL';
+            state.currentRound = parseInt(localStorage.getItem('iesa_current_round') || '1');
             state.currentKnockoutRound = localStorage.getItem('iesa_current_knockout_round') || 'r32';
             state.adminPhase = localStorage.getItem('iesa_admin_phase') || 'groups';
             
@@ -704,6 +706,48 @@ function renderGroupMatches() {
     if (!list) return;
     list.innerHTML = '';
     
+    // Sincronizar el título de la sección y la pestaña activa del grupo
+    const titleEl = document.getElementById('currentGroupTitle');
+    if (titleEl) {
+        if (state.currentGroup === 'ALL') {
+            titleEl.innerHTML = `Todos los Partidos <span>Pronósticos</span>`;
+        } else {
+            titleEl.innerHTML = `Grupo ${state.currentGroup} <span>Pronósticos</span>`;
+        }
+    }
+    
+    // Sincronizar clase active en las pestañas de grupos
+    document.querySelectorAll('#groupsNav .group-tab').forEach(tab => {
+        if (state.currentGroup === 'ALL' && tab.textContent.trim() === 'Todos') {
+            tab.classList.add('active');
+        } else if (tab.textContent.trim() === `Grupo ${state.currentGroup}`) {
+            tab.classList.add('active');
+        } else {
+            tab.classList.remove('active');
+        }
+    });
+
+    // Controlar visibilidad de subtab para Ronda 1 y Ronda 2
+    const roundSubNav = document.getElementById('roundSubNav');
+    if (roundSubNav) {
+        if (state.currentGroup === 'ALL') {
+            roundSubNav.style.display = 'flex';
+            const tab1 = document.getElementById('subtab-round1');
+            const tab2 = document.getElementById('subtab-round2');
+            if (tab1 && tab2) {
+                if (state.currentRound === 1) {
+                    tab1.classList.add('active');
+                    tab2.classList.remove('active');
+                } else {
+                    tab1.classList.remove('active');
+                    tab2.classList.add('active');
+                }
+            }
+        } else {
+            roundSubNav.style.display = 'none';
+        }
+    }
+
     // Filtrar partidos
     let filteredMatches = DEFAULT_MATCHES;
     if (state.currentGroup !== 'ALL') {
@@ -716,6 +760,15 @@ function renderGroupMatches() {
         const dateB = parseMatchDate(b.date, b.time);
         return dateA - dateB;
     });
+
+    // Si está en Todos, filtrar por Ronda 1 o Ronda 2
+    if (state.currentGroup === 'ALL') {
+        if (state.currentRound === 1) {
+            filteredMatches = filteredMatches.slice(0, 36);
+        } else {
+            filteredMatches = filteredMatches.slice(36);
+        }
+    }
     
     const user = state.users.find(u => u.id === state.currentUser);
     if (!user) return;
@@ -2062,4 +2115,10 @@ function toggleUserPredDetails(userId, btn) {
         details.style.display = isHidden ? 'block' : 'none';
         btn.innerHTML = isHidden ? 'Ocultar Pronósticos 🔼' : 'Ver Pronósticos 🔽';
     }
+}
+
+function switchRoundSubTab(roundNum) {
+    state.currentRound = roundNum;
+    localStorage.setItem('iesa_current_round', roundNum);
+    renderGroupMatches();
 }

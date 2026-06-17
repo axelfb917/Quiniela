@@ -107,6 +107,12 @@
                 <!-- Se poblará con JavaScript (A, B, C, D, E, F, G, H) -->
             </div>
 
+            <!-- Pestañas secundarias para Ronda 1 y Ronda 2 (se muestran solo al ver Todos) -->
+            <div class="groups-nav" id="roundSubNav" style="display: none; margin-top: -8px; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+                <div class="group-tab active" id="subtab-round1" onclick="switchRoundSubTab(1)">Ronda 1 (Partidos 1-36)</div>
+                <div class="group-tab" id="subtab-round2" onclick="switchRoundSubTab(2)">Ronda 2 (Partidos 37-72)</div>
+            </div>
+
             <h2 class="section-title" id="currentGroupTitle">Grupo A <span>Pronósticos</span></h2>
             <div id="groupMatchesList">
                 <!-- Se poblará dinámicamente con las tarjetas de partidos -->
