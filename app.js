@@ -1719,6 +1719,7 @@ function adjustOfficialScore(matchId, teamIndex, delta) {
     }
 
     saveOfficialResultsToStorage();
+    calculateAllPointsAdminChange();
     renderAdminMatches();
 }
 
@@ -1737,6 +1738,7 @@ function setOfficialKnockoutWinner(matchId, teamName) {
     cleanSubsequentOfficialRounds(roundKey, matchIndex);
     
     saveOfficialResultsToStorage();
+    calculateAllPointsAdminChange();
     renderAdminMatches();
 }
 
@@ -1799,8 +1801,45 @@ function calculateMatchPoints(prediction, official) {
     return 0;
 }
 
-// Calcular puntos totales de todos los usuarios
+// Calcular puntos totales de todos los usuarios (sin modificar la tendencia de posiciones guardada)
 function calculateAllPoints() {
+    state.users.forEach(user => {
+        let total = 0;
+
+        // Puntos por Fase de Grupos
+        for (const matchId in user.predictions) {
+            const prediction = user.predictions[matchId];
+            const official = state.officialResults[matchId];
+            if (official) {
+                total += calculateMatchPoints(prediction, official);
+            }
+        }
+
+        // Puntos por Fase Final (Acierto de clasificados / ganadores en llave)
+        for (const key in user.knockoutWinner) {
+            const predictedWinner = user.knockoutWinner[key];
+            
+            // Extraer la llave asociada en officialResults
+            // La key del usuario es 'r16_0', 'r16_1', etc. Mapeamos a 'R16_1', 'R16_2'
+            const [round, indexStr] = key.split('_');
+            const index = parseInt(indexStr);
+            const matchId = `${round.toUpperCase()}_${index + 1}`;
+
+            const officialWinner = state.officialResults[matchId];
+            if (officialWinner && officialWinner === predictedWinner) {
+                total += 5; // Acierto de clasificado/ganador de llave (+5 pts)
+            }
+        }
+
+        user.totalPoints = total;
+    });
+
+    // Guardar los puntos actualizados
+    saveUsersToStorage();
+}
+
+// Calcular puntos totales y actualizar el ranking anterior (solo al cambiar resultados oficiales)
+function calculateAllPointsAdminChange() {
     // 1. Obtener la posición actual antes de recalcular (que pasará a ser la anterior)
     const currentRanking = [...state.users]
         .filter(u => u && !u.isAdmin)
@@ -1834,21 +1873,20 @@ function calculateAllPoints() {
             const predictedWinner = user.knockoutWinner[key];
             
             // Extraer la llave asociada en officialResults
-            // La key del usuario es 'r16_0', 'r16_1', etc. Mapeamos a 'R16_1', 'R16_2'
             const [round, indexStr] = key.split('_');
             const index = parseInt(indexStr);
             const matchId = `${round.toUpperCase()}_${index + 1}`;
 
             const officialWinner = state.officialResults[matchId];
             if (officialWinner && officialWinner === predictedWinner) {
-                total += 5; // Acierto de clasificado/ganador de llave (+5 pts)
+                total += 5;
             }
         }
 
         user.totalPoints = total;
     });
 
-    // Guardar los puntos actualizados
+    // Guardar los puntos y la tendencia en Firebase
     saveUsersToStorage();
 }
 
@@ -2112,12 +2150,14 @@ function saveDirectOfficialScore(matchId, teamIndex, value) {
     }
     
     saveOfficialResultsToStorage();
+    calculateAllPointsAdminChange();
 }
 
 async function resetOfficialResults() {
     if (confirm("¿Estás seguro de que deseas restablecer todos los resultados oficiales? Esto borrará todos los marcadores reales de grupos y ganadores de llaves.")) {
         state.officialResults = {};
         await saveOfficialResultsToStorage();
+        calculateAllPointsAdminChange();
         renderAll();
     }
 }
