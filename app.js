@@ -437,6 +437,7 @@ async function saveUsersToStorage() {
         state.users.forEach(u => {
             if (u && u.id && !u.isAdmin) {
                 patchData[`${u.id}/totalPoints`] = u.totalPoints || 0;
+                patchData[`${u.id}/previousRank`] = u.previousRank !== undefined ? u.previousRank : null;
             }
         });
         try {
@@ -1338,11 +1339,32 @@ function renderLeaderboard() {
     const list = document.getElementById('leaderboardList');
     list.innerHTML = '';
 
-    // Ordenar usuarios por puntaje total
-    const sortedUsers = [...state.users].sort((a, b) => (b.totalPoints || 0) - (a.totalPoints || 0));
+    // Ordenar usuarios por puntaje total, excluyendo administradores
+    const sortedUsers = [...state.users]
+        .filter(u => u && !u.isAdmin)
+        .sort((a, b) => (b.totalPoints || 0) - (a.totalPoints || 0));
 
     sortedUsers.forEach((user, index) => {
         const isSelf = user.id === state.currentUser;
+        const currentRank = index + 1;
+        const previousRank = user.previousRank;
+        
+        let rankTrendHtml = '';
+        if (previousRank !== undefined && previousRank !== null) {
+            if (currentRank < previousRank) {
+                // Subió de posición
+                rankTrendHtml = `<span class="rank-trend up" style="color: var(--success-color); font-weight: 700; font-size: 0.65rem; margin-top: 2px;">▲${previousRank - currentRank}</span>`;
+            } else if (currentRank > previousRank) {
+                // Bajó de posición
+                rankTrendHtml = `<span class="rank-trend down" style="color: var(--primary-color); font-weight: 700; font-size: 0.65rem; margin-top: 2px;">▼${currentRank - previousRank}</span>`;
+            } else {
+                // Se mantuvo igual
+                rankTrendHtml = `<span class="rank-trend same" style="color: var(--text-muted); font-weight: 700; font-size: 0.65rem; margin-top: 2px;">•</span>`;
+            }
+        } else {
+            // Sin historial de ranking
+            rankTrendHtml = `<span class="rank-trend same" style="color: var(--text-muted); font-weight: 700; font-size: 0.65rem; margin-top: 2px;">•</span>`;
+        }
         
         let trophy = '';
         if (index === 0) trophy = '👑 ';
@@ -1350,7 +1372,10 @@ function renderLeaderboard() {
         const item = document.createElement('div');
         item.className = `leaderboard-item ${isSelf ? 'current-user' : ''}`;
         item.innerHTML = `
-            <div class="rank-number">${index + 1}</div>
+            <div class="rank-number" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 32px; text-align: center; gap: 1px;">
+                <span style="font-weight: 800; font-size: 1rem; color: var(--text-primary);">${currentRank}</span>
+                ${rankTrendHtml}
+            </div>
             <div class="user-info">
                 <span class="user-name">${trophy}${user.name}</span>
                 <span class="user-dept">${user.dept}</span>
@@ -1776,6 +1801,22 @@ function calculateMatchPoints(prediction, official) {
 
 // Calcular puntos totales de todos los usuarios
 function calculateAllPoints() {
+    // 1. Obtener la posición actual antes de recalcular (que pasará a ser la anterior)
+    const currentRanking = [...state.users]
+        .filter(u => u && !u.isAdmin)
+        .sort((a, b) => (b.totalPoints || 0) - (a.totalPoints || 0));
+
+    // Asignar el ranking anterior
+    state.users.forEach(user => {
+        if (user && !user.isAdmin) {
+            const prevRankIndex = currentRanking.findIndex(u => u.id === user.id);
+            if (user.totalPoints !== undefined && prevRankIndex !== -1) {
+                user.previousRank = prevRankIndex + 1;
+            }
+        }
+    });
+
+    // 2. Recalcular puntos
     state.users.forEach(user => {
         let total = 0;
 
