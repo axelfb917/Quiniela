@@ -192,6 +192,16 @@ function getFirst36MatchIds() {
 }
 
 function isMatchLocked(matchId) {
+    // Permitir a Martín Pérez editar partidos que no tengan resultado oficial definido aún
+    const user = state.users.find(u => u && u.id === state.currentUser);
+    if (user && user.id === 'u_1781200493623') {
+        const official = state.officialResults[matchId];
+        const isOfficialDefined = official && official.score1 !== null && official.score2 !== null;
+        if (!isOfficialDefined) {
+            return false;
+        }
+    }
+
     // Los 2 partidos jugados hoy (11 de junio: A1 y A2) se bloquean de inmediato
     if (matchId === 'A1' || matchId === 'A2') {
         return true;
@@ -210,6 +220,14 @@ function isMatchLocked(matchId) {
 }
 
 function isAllGroupStageLocked() {
+    const user = state.users.find(u => u && u.id === state.currentUser);
+    if (user && user.id === 'u_1781200493623') {
+        const hasUnplayed = DEFAULT_MATCHES.some(m => {
+            const official = state.officialResults[m.id];
+            return !official || official.score1 === null || official.score2 === null;
+        });
+        if (hasUnplayed) return false;
+    }
     return new Date() >= SECOND_STAGE_LOCK_TIME;
 }
 
