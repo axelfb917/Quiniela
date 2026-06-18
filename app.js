@@ -192,9 +192,9 @@ function getFirst36MatchIds() {
 }
 
 function isMatchLocked(matchId) {
-    // Permitir a Martín Pérez editar partidos que no tengan resultado oficial definido aún
+    // Permitir a Martín Pérez editar partidos que no tengan resultado oficial definido aún, SOLO por hoy (hasta el 19 de junio a las 12:00 AM)
     const user = state.users.find(u => u && u.id === state.currentUser);
-    if (user && user.id === 'u_1781200493623') {
+    if (user && user.id === 'u_1781200493623' && new Date() < new Date(2026, 5, 19, 0, 0, 0)) {
         const official = state.officialResults[matchId];
         const isOfficialDefined = official && official.score1 !== null && official.score2 !== null;
         if (!isOfficialDefined) {
@@ -221,7 +221,7 @@ function isMatchLocked(matchId) {
 
 function isAllGroupStageLocked() {
     const user = state.users.find(u => u && u.id === state.currentUser);
-    if (user && user.id === 'u_1781200493623') {
+    if (user && user.id === 'u_1781200493623' && new Date() < new Date(2026, 5, 19, 0, 0, 0)) {
         const hasUnplayed = DEFAULT_MATCHES.some(m => {
             const official = state.officialResults[m.id];
             return !official || official.score1 === null || official.score2 === null;
