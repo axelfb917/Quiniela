@@ -172,7 +172,7 @@ const DEFAULT_GROUP_STANDINGS = {
 
 // Fecha límite para votaciones de la Fase de Grupos
 const FIRST_STAGE_MIDNIGHT_LOCK_TIME = new Date('2026-06-12T00:00:00-06:00'); // Cierre hoy a las 12 AM (medianoche)
-const SECOND_STAGE_LOCK_TIME = new Date('2026-06-20T00:00:00-06:00'); // Antes de las 12:00 AM (medianoche) del 20 de junio
+const SECOND_STAGE_LOCK_TIME = new Date('2026-06-20T23:59:00-06:00'); // Antes de las 11:59 PM del 20 de junio
 
 let cachedFirst36Ids = null;
 
@@ -825,7 +825,7 @@ function renderGroupMatches() {
             <span class="lockout-icon">🔓</span>
             <div class="lockout-content">
                 <div class="lockout-title">Votaciones Parcialmente Abiertas</div>
-                <div class="lockout-desc">Los primeros 36 partidos se han bloqueado. Los últimos 36 partidos siguen abiertos para pronosticar. <strong style="color:var(--warning-color);">Faltan ${timeRemainingText} para el cierre definitivo (20 de junio a las 12:00 AM).</strong></div>
+                <div class="lockout-desc">Los primeros 36 partidos se han bloqueado. Los últimos 36 partidos siguen abiertos para pronosticar. <strong style="color:var(--warning-color);">Faltan ${timeRemainingText} para el cierre definitivo (20 de junio a las 11:59 PM).</strong></div>
             </div>
         `;
     } else {
@@ -838,7 +838,7 @@ function renderGroupMatches() {
             <span class="lockout-icon animated-icon">🔓</span>
             <div class="lockout-content">
                 <div class="lockout-title">Votaciones de Grupos Habilitadas</div>
-                <div class="lockout-desc">Los 2 partidos de hoy (11 de junio) ya están cerrados. Tienes hasta hoy a las 12:00 AM (medianoche) para pronosticar el resto del primer bloque de partidos. <strong style="color:var(--success-color); white-space: nowrap;">(Faltan ${diffHours} horas y ${diffMins} minutos)</strong>. Los últimos 36 partidos cierran el 20 de junio.</div>
+                <div class="lockout-desc">Los 2 partidos de hoy (11 de junio) ya están cerrados. Tienes hasta hoy a las 12:00 AM (medianoche) para pronosticar el resto del primer bloque de partidos. <strong style="color:var(--success-color); white-space: nowrap;">(Faltan ${diffHours} horas y ${diffMins} minutos)</strong>. Los últimos 36 partidos cierran el 20 de junio a las 11:59 PM.</div>
             </div>
         `;
     }
