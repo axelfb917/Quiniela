@@ -1,3 +1,54 @@
+const TEAM_LOGOS = {
+    "México": "https://raw.githubusercontent.com/sportlogos/sport.db.logos/master/north-america/mex.png",
+    "Sudáfrica": "https://raw.githubusercontent.com/sportlogos/sport.db.logos/master/africa/rsa.png",
+    "Corea del Sur": "https://raw.githubusercontent.com/sportlogos/sport.db.logos/master/asia/kor.png",
+    "Chequia": "https://raw.githubusercontent.com/sportlogos/sport.db.logos/master/europe/cze.png",
+    "Canadá": "https://raw.githubusercontent.com/sportlogos/sport.db.logos/master/north-america/can.png",
+    "Bosnia y Herzegovina": "https://raw.githubusercontent.com/sportlogos/sport.db.logos/master/europe/bih.png",
+    "Catar": "https://raw.githubusercontent.com/sportlogos/sport.db.logos/master/middle-east/qat.png",
+    "Suiza": "https://raw.githubusercontent.com/sportlogos/sport.db.logos/master/europe/sui.png",
+    "Brasil": "https://raw.githubusercontent.com/sportlogos/sport.db.logos/master/south-america/bra.png",
+    "Marruecos": "https://raw.githubusercontent.com/sportlogos/sport.db.logos/master/africa/mar.png",
+    "Escocia": "https://raw.githubusercontent.com/sportlogos/sport.db.logos/master/europe/sco.png",
+    "Haití": "https://raw.githubusercontent.com/sportlogos/sport.db.logos/master/caribbean/hai.png",
+    "Estados Unidos": "https://raw.githubusercontent.com/sportlogos/sport.db.logos/master/north-america/usa.png",
+    "Turquía": "https://raw.githubusercontent.com/sportlogos/sport.db.logos/master/europe/tur.png",
+    "Australia": "https://raw.githubusercontent.com/sportlogos/sport.db.logos/master/pacific/aus.png",
+    "Paraguay": "https://raw.githubusercontent.com/sportlogos/sport.db.logos/master/south-america/par.png",
+    "Alemania": "https://raw.githubusercontent.com/sportlogos/sport.db.logos/master/europe/ger.png",
+    "Ecuador": "https://raw.githubusercontent.com/sportlogos/sport.db.logos/master/south-america/ecu.png",
+    "Costa de Marfil": "https://raw.githubusercontent.com/sportlogos/sport.db.logos/master/africa/civ.png",
+    "Curazao": "https://assets.football-logos.cc/logos/curacao/256x256/curacao-national-team.4b718c25.png",
+    "Países Bajos": "https://raw.githubusercontent.com/sportlogos/sport.db.logos/master/europe/ned.png",
+    "Japón": "https://raw.githubusercontent.com/sportlogos/sport.db.logos/master/asia/jpn.png",
+    "Suecia": "https://raw.githubusercontent.com/sportlogos/sport.db.logos/master/europe/swe.png",
+    "Túnez": "https://raw.githubusercontent.com/sportlogos/sport.db.logos/master/africa/tun.png",
+    "Bélgica": "https://raw.githubusercontent.com/sportlogos/sport.db.logos/master/europe/bel.png",
+    "Egipto": "https://raw.githubusercontent.com/sportlogos/sport.db.logos/master/africa/egy.png",
+    "Irán": "https://raw.githubusercontent.com/sportlogos/sport.db.logos/master/middle-east/irn.png",
+    "Nueva Zelanda": "https://raw.githubusercontent.com/sportlogos/sport.db.logos/master/pacific/nzl.png",
+    "España": "https://raw.githubusercontent.com/sportlogos/sport.db.logos/master/europe/esp.png",
+    "Uruguay": "https://raw.githubusercontent.com/sportlogos/sport.db.logos/master/south-america/uru.png",
+    "Cabo Verde": "https://raw.githubusercontent.com/sportlogos/sport.db.logos/master/africa/cpv.png",
+    "Arabia Saudita": "https://raw.githubusercontent.com/sportlogos/sport.db.logos/master/middle-east/ksa.png",
+    "Francia": "https://raw.githubusercontent.com/sportlogos/sport.db.logos/master/europe/fra.png",
+    "Senegal": "https://raw.githubusercontent.com/sportlogos/sport.db.logos/master/africa/sen.png",
+    "Noruega": "https://raw.githubusercontent.com/sportlogos/sport.db.logos/master/europe/nor.png",
+    "Irak": "https://raw.githubusercontent.com/sportlogos/sport.db.logos/master/middle-east/irq.png",
+    "Argentina": "https://raw.githubusercontent.com/sportlogos/sport.db.logos/master/south-america/arg.png",
+    "Austria": "https://raw.githubusercontent.com/sportlogos/sport.db.logos/master/europe/aut.png",
+    "Argelia": "https://raw.githubusercontent.com/sportlogos/sport.db.logos/master/africa/alg.png",
+    "Jordania": "https://raw.githubusercontent.com/sportlogos/sport.db.logos/master/middle-east/jor.png",
+    "Portugal": "https://raw.githubusercontent.com/sportlogos/sport.db.logos/master/europe/por.png",
+    "Colombia": "https://raw.githubusercontent.com/sportlogos/sport.db.logos/master/south-america/col.png",
+    "RD Congo": "https://raw.githubusercontent.com/sportlogos/sport.db.logos/master/africa/cod.png",
+    "Uzbekistán": "https://raw.githubusercontent.com/sportlogos/sport.db.logos/master/asia/uzb.png",
+    "Inglaterra": "https://raw.githubusercontent.com/sportlogos/sport.db.logos/master/europe/eng.png",
+    "Croacia": "https://raw.githubusercontent.com/sportlogos/sport.db.logos/master/europe/cro.png",
+    "Ghana": "https://raw.githubusercontent.com/sportlogos/sport.db.logos/master/africa/gha.png",
+    "Panamá": "https://raw.githubusercontent.com/sportlogos/sport.db.logos/master/central-america/pan.png"
+};
+
 // Datos iniciales de partidos de la Fase de Grupos (Mundial 2026)
 const DEFAULT_MATCHES = [
     // Grupo A
@@ -689,7 +740,13 @@ function renderAll() {
         if (headerUserNameEl) headerUserNameEl.textContent = user.name.split(' ')[0];
         
         const profileNameEl = document.getElementById('profileName');
-        if (profileNameEl) profileNameEl.textContent = user.name;
+        if (profileNameEl) {
+            let profileLogoHtml = '';
+            if (user.favoriteTeam && TEAM_LOGOS[user.favoriteTeam]) {
+                profileLogoHtml = `<img src="${TEAM_LOGOS[user.favoriteTeam]}" alt="${user.favoriteTeam}" style="width: 24px; height: 24px; object-fit: contain; vertical-align: middle;" />`;
+            }
+            profileNameEl.innerHTML = `<span>${user.name}</span> ${profileLogoHtml}`;
+        }
         
         const profileDeptEl = document.getElementById('profileDept');
         if (profileDeptEl) profileDeptEl.textContent = user.dept;
@@ -705,6 +762,74 @@ function renderAll() {
         const predictedKnockoutsCount = Object.keys(user.knockoutWinner || {}).length;
         const profileKnockoutsPredictedEl = document.getElementById('profileKnockoutsPredicted');
         if (profileKnockoutsPredictedEl) profileKnockoutsPredictedEl.textContent = `${predictedKnockoutsCount}/32`;
+
+        // Lógica de Selección de Equipo Favorito
+        const profileFavoriteTeamEl = document.getElementById('profileFavoriteTeam');
+        if (profileFavoriteTeamEl) {
+            // Poblar las opciones si solo está la opción "Ninguno"
+            if (profileFavoriteTeamEl.options.length <= 1) {
+                const sortedTeams = Object.keys(TEAM_LOGOS).sort();
+                sortedTeams.forEach(team => {
+                    const opt = document.createElement('option');
+                    opt.value = team;
+                    opt.textContent = team;
+                    profileFavoriteTeamEl.appendChild(opt);
+                });
+            }
+            
+            // Establecer el valor seleccionado actual
+            profileFavoriteTeamEl.value = user.favoriteTeam || "";
+            
+            // Actualizar la previsualización del logo
+            const profileTeamLogoEl = document.getElementById('profileTeamLogo');
+            if (profileTeamLogoEl) {
+                if (user.favoriteTeam && TEAM_LOGOS[user.favoriteTeam]) {
+                    profileTeamLogoEl.src = TEAM_LOGOS[user.favoriteTeam];
+                    profileTeamLogoEl.style.display = 'block';
+                } else {
+                    profileTeamLogoEl.src = '';
+                    profileTeamLogoEl.style.display = 'none';
+                }
+            }
+
+            // Registrar el evento change para actualizar la base de datos
+            if (!profileFavoriteTeamEl.dataset.listenerAttached) {
+                profileFavoriteTeamEl.addEventListener('change', async (e) => {
+                    const selectedTeam = e.target.value;
+                    const u = state.users.find(usr => usr.id === state.currentUser);
+                    if (u) {
+                        u.favoriteTeam = selectedTeam || null;
+                        
+                        // Actualizar la previsualización del logo inmediatamente
+                        const logoEl = document.getElementById('profileTeamLogo');
+                        if (logoEl) {
+                            if (selectedTeam && TEAM_LOGOS[selectedTeam]) {
+                                logoEl.src = TEAM_LOGOS[selectedTeam];
+                                logoEl.style.display = 'block';
+                            } else {
+                                logoEl.src = '';
+                                logoEl.style.display = 'none';
+                            }
+                        }
+                        
+                        // Actualizar el logo al lado del nombre del perfil inmediatamente
+                        const nameEl = document.getElementById('profileName');
+                        if (nameEl) {
+                            let profileLogoHtml = '';
+                            if (selectedTeam && TEAM_LOGOS[selectedTeam]) {
+                                profileLogoHtml = `<img src="${TEAM_LOGOS[selectedTeam]}" alt="${selectedTeam}" style="width: 24px; height: 24px; object-fit: contain; vertical-align: middle;" />`;
+                            }
+                            nameEl.innerHTML = `<span>${u.name}</span> ${profileLogoHtml}`;
+                        }
+                        
+                        await saveUsersToStorage();
+                        // Actualizar la tabla general si existe
+                        renderLeaderboard();
+                    }
+                });
+                profileFavoriteTeamEl.dataset.listenerAttached = "true";
+            }
+        }
     }
 
     // Renderizado condicional según pestaña activa
@@ -1387,6 +1512,11 @@ function renderLeaderboard() {
         let trophy = '';
         if (index === 0) trophy = '👑 ';
 
+        let logoHtml = '';
+        if (user.favoriteTeam && TEAM_LOGOS[user.favoriteTeam]) {
+            logoHtml = `<img src="${TEAM_LOGOS[user.favoriteTeam]}" alt="${user.favoriteTeam}" title="${user.favoriteTeam}" class="leaderboard-team-logo" style="width: 18px; height: 18px; object-fit: contain; vertical-align: middle; margin-left: 4px; border-radius: 2px;" />`;
+        }
+
         const item = document.createElement('div');
         item.className = `leaderboard-item ${isSelf ? 'current-user' : ''}`;
         item.innerHTML = `
@@ -1395,7 +1525,10 @@ function renderLeaderboard() {
                 ${rankTrendHtml}
             </div>
             <div class="user-info">
-                <span class="user-name">${trophy}${user.name}</span>
+                <span class="user-name" style="display: flex; align-items: center; gap: 4px; flex-wrap: wrap;">
+                    <span>${trophy}${user.name}</span>
+                    ${logoHtml}
+                </span>
                 <span class="user-dept">${user.dept}</span>
             </div>
             <div class="user-points-badge">
