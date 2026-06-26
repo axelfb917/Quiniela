@@ -1548,7 +1548,7 @@ function renderLeaderboard() {
             btn.style.borderColor = 'var(--success-color)';
             btn.style.color = 'var(--success-color)';
         } else {
-            btn.textContent = 'Ver Tabla Acumulada (Ronda 1 + 2)';
+            btn.textContent = 'Ver Tabla GLOBAL';
             btn.style.borderColor = 'var(--primary-color)';
             btn.style.color = 'var(--primary-color)';
         }
