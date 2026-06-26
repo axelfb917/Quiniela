@@ -54,7 +54,9 @@
             <div class="match-card" style="align-items: stretch;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                     <div>
-                        <div id="profileName" style="font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">Nombre Empleado</div>
+                        <div id="profileName"
+                            style="font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                            Nombre Empleado</div>
                         <div id="profileDept" style="font-size: 0.85rem; color: var(--text-secondary);">Departamento
                         </div>
                     </div>
@@ -64,14 +66,20 @@
                     </div>
                 </div>
 
-                <div style="margin-top: 12px; border-top: 1px solid var(--border-color); padding-top: 12px; margin-bottom: 12px;">
-                    <label class="form-label" style="display: block; margin-bottom: 6px; font-size: 0.85rem; font-weight: 500;">Selección Favorita</label>
+                <div
+                    style="margin-top: 12px; border-top: 1px solid var(--border-color); padding-top: 12px; margin-bottom: 12px;">
+                    <label class="form-label"
+                        style="display: block; margin-bottom: 6px; font-size: 0.85rem; font-weight: 500;">Selección
+                        Favorita</label>
                     <div style="display: flex; align-items: center; gap: 10px;">
-                        <select id="profileFavoriteTeam" class="form-input" style="flex: 1; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: rgba(255,255,255,0.05); color: var(--text-primary); outline: none;">
+                        <select id="profileFavoriteTeam" class="form-input"
+                            style="flex: 1; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: rgba(255,255,255,0.05); color: var(--text-primary); outline: none;">
                             <option value="">Ninguno</option>
                         </select>
-                        <div id="profileTeamLogoContainer" style="width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid var(--border-color); padding: 4px;">
-                            <img id="profileTeamLogo" src="" alt="" style="max-width: 100%; max-height: 100%; display: none; object-fit: contain;">
+                        <div id="profileTeamLogoContainer"
+                            style="width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid var(--border-color); padding: 4px;">
+                            <img id="profileTeamLogo" src="" alt=""
+                                style="max-width: 100%; max-height: 100%; display: none; object-fit: contain;">
                         </div>
                     </div>
                 </div>
@@ -120,8 +128,10 @@
             </div>
 
             <!-- Pestañas secundarias para Ronda 1 y Ronda 2 (se muestran solo al ver Todos) -->
-            <div class="groups-nav" id="roundSubNav" style="display: none; margin-top: -8px; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
-                <div class="group-tab active" id="subtab-round1" onclick="switchRoundSubTab(1)">Ronda 1 (Partidos 1-36)</div>
+            <div class="groups-nav" id="roundSubNav"
+                style="display: none; margin-top: -8px; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+                <div class="group-tab active" id="subtab-round1" onclick="switchRoundSubTab(1)">Ronda 1 (Partidos 1-36)
+                </div>
                 <div class="group-tab" id="subtab-round2" onclick="switchRoundSubTab(2)">Ronda 2 (Partidos 37-72)</div>
             </div>
 
@@ -156,7 +166,15 @@
 
         <!-- 4. PÁGINA: TABLA GENERAL -->
         <section id="page-leaderboard" class="page">
-            <h2 class="section-title">Tabla de Posiciones <span>Ranking IESA</span></h2>
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 8px;">
+                <h2 class="section-title" style="margin: 0; padding-bottom: 0;">Tabla de Posiciones <span>Ranking
+                        IESA</span></h2>
+                <button id="leaderboardToggleBtn" onclick="toggleLeaderboardMode()" class="btn"
+                    style="font-size: 0.8rem; padding: 6px 12px; border-radius: 20px; border: 1px solid var(--primary-color); background: transparent; color: var(--primary-color); cursor: pointer; font-weight: 600; transition: all 0.2s ease;">
+                    Ver Tabla GLOBAL
+                </button>
+            </div>
             <div class="leaderboard-list" id="leaderboardList">
                 <!-- Se poblará dinámicamente con los puntajes de los empleados -->
             </div>
@@ -182,7 +200,8 @@
                 <div class="group-tab" onclick="switchAdminPhase('qf', this)">Cuartos</div>
                 <div class="group-tab" onclick="switchAdminPhase('sf', this)">Semifinales</div>
                 <div class="group-tab" onclick="switchAdminPhase('f', this)">Finales</div>
-                <div class="group-tab" onclick="switchAdminPhase('users_predictions', this)">Pronósticos de Usuarios</div>
+                <div class="group-tab" onclick="switchAdminPhase('users_predictions', this)">Pronósticos de Usuarios
+                </div>
             </div>
 
             <div class="groups-nav" id="adminGroupsNav">

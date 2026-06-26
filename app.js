@@ -282,6 +282,51 @@ function isAllGroupStageLocked() {
     return new Date() >= SECOND_STAGE_LOCK_TIME;
 }
 
+// Puntos estáticos obtenidos en la Ronda 1 (Primera Quiniela)
+const ROUND_1_POINTS = {
+  "u_1781033495200": 59,
+  "u_1781055826501": 69,
+  "u_1781063534557": 61,
+  "u_1781063974700": 76,
+  "u_1781064499204": 63,
+  "u_1781064757578": 68,
+  "u_1781065449302": 63,
+  "u_1781068447794": 73,
+  "u_1781099056603": 68,
+  "u_1781105495134": 12,
+  "u_1781105787230": 69,
+  "u_1781106106363": 67,
+  "u_1781106423872": 73,
+  "u_1781107492300": 70,
+  "u_1781109317296": 56,
+  "u_1781111103586": 65,
+  "u_1781111959695": 70,
+  "u_1781116943100": 65,
+  "u_1781119293468": 74,
+  "u_1781121115974": 87,
+  "u_1781122181066": 73,
+  "u_1781123503213": 59,
+  "u_1781124734888": 82,
+  "u_1781124979916": 61,
+  "u_1781134640285": 83,
+  "u_1781145675071": 59,
+  "u_1781182592035": 76,
+  "u_1781188471740": 52,
+  "u_1781189007704": 51,
+  "u_1781189814687": 86,
+  "u_1781196268442": 67,
+  "u_1781197220547": 63,
+  "u_1781200282528": 30,
+  "u_1781200325188": 72,
+  "u_1781200493623": 39,
+  "u_1781208156403": 0,
+  "u_1781397919241": 0,
+  "u_1781667897593": 0,
+  "u_1781772990820": 0,
+  "u_1781908387758": 0,
+  "u_1782018990343": 0
+};
+
 // Variables de Estado global
 let state = {
     activePage: 'profile',
@@ -291,7 +336,8 @@ let state = {
     adminPhase: 'groups',
     currentUser: null,
     users: [],
-    officialResults: {} // { matchId: { score1, score2 } } o { knockoutId: winnerTeamName }
+    officialResults: {}, // { matchId: { score1, score2 } } o { knockoutId: winnerTeamName }
+    leaderboardMode: 'current' // 'current' (R2) o 'accumulated' (R1 + R2)
 };
 
 // Inicialización al cargar la página
@@ -340,8 +386,8 @@ async function loadDatabase() {
             // Firebase puede retornar un objeto { u_1: {...} } o un arreglo. Lo normalizamos a arreglo.
             let rawUsers = Array.isArray(users) ? users.filter(Boolean) : Object.values(users);
             
-            // Eliminar usuarios de prueba (demo) si existen en la base de datos
-            rawUsers = rawUsers.filter(u => u && !u.id.startsWith('u_demo'));
+            // Eliminar usuarios de prueba (demo) o corruptos si existen en la base de datos
+            rawUsers = rawUsers.filter(u => u && u.id && u.name && !u.id.startsWith('u_demo'));
 
             // Agrupar usuarios por nombre normalizado para detectar duplicados de forma inteligente
             const usersByName = {};
@@ -483,6 +529,7 @@ async function loadDatabase() {
             state.currentRound = parseInt(localStorage.getItem('iesa_current_round') || '1');
             state.currentKnockoutRound = localStorage.getItem('iesa_current_knockout_round') || 'r32';
             state.adminPhase = localStorage.getItem('iesa_admin_phase') || 'groups';
+            state.leaderboardMode = localStorage.getItem('iesa_leaderboard_mode') || 'current';
             
             switchPage(savedPage);
         } else {
@@ -1477,15 +1524,51 @@ function cleanSubsequentRounds(roundKey, matchIndex) {
     }
 }
 
+// Alternar el modo de la tabla (Ronda 2 o Acumulada)
+function toggleLeaderboardMode() {
+    if (state.leaderboardMode === 'accumulated') {
+        state.leaderboardMode = 'current';
+    } else {
+        state.leaderboardMode = 'accumulated';
+    }
+    localStorage.setItem('iesa_leaderboard_mode', state.leaderboardMode);
+    renderLeaderboard();
+}
+
 // Renderizar la Tabla General de Posiciones (Leaderboard)
 function renderLeaderboard() {
     const list = document.getElementById('leaderboardList');
+    if (!list) return;
     list.innerHTML = '';
 
-    // Ordenar usuarios por puntaje total, excluyendo administradores
+    const btn = document.getElementById('leaderboardToggleBtn');
+    if (btn) {
+        if (state.leaderboardMode === 'accumulated') {
+            btn.textContent = 'Ver Tabla Ronda 2 (Actual)';
+            btn.style.borderColor = 'var(--success-color)';
+            btn.style.color = 'var(--success-color)';
+        } else {
+            btn.textContent = 'Ver Tabla Acumulada (Ronda 1 + 2)';
+            btn.style.borderColor = 'var(--primary-color)';
+            btn.style.color = 'var(--primary-color)';
+        }
+    }
+
+    // Obtener y ordenar usuarios
+    const mode = state.leaderboardMode || 'current';
     const sortedUsers = [...state.users]
         .filter(u => u && !u.isAdmin)
-        .sort((a, b) => (b.totalPoints || 0) - (a.totalPoints || 0));
+        .map(u => {
+            const r2 = u.totalPoints || 0;
+            const r1 = ROUND_1_POINTS[u.id] || 0;
+            return {
+                ...u,
+                r1: r1,
+                r2: r2,
+                sortPoints: mode === 'accumulated' ? (r1 + r2) : r2
+            };
+        })
+        .sort((a, b) => b.sortPoints - a.sortPoints);
 
     sortedUsers.forEach((user, index) => {
         const isSelf = user.id === state.currentUser;
@@ -1493,20 +1576,22 @@ function renderLeaderboard() {
         const previousRank = user.previousRank;
         
         let rankTrendHtml = '';
-        if (previousRank !== undefined && previousRank !== null) {
-            if (currentRank < previousRank) {
-                // Subió de posición
-                rankTrendHtml = `<span class="rank-trend up" style="color: var(--success-color); font-weight: 700; font-size: 0.65rem; margin-top: 2px;">▲${previousRank - currentRank}</span>`;
-            } else if (currentRank > previousRank) {
-                // Bajó de posición
-                rankTrendHtml = `<span class="rank-trend down" style="color: var(--primary-color); font-weight: 700; font-size: 0.65rem; margin-top: 2px;">▼${currentRank - previousRank}</span>`;
+        if (mode === 'current') {
+            if (previousRank !== undefined && previousRank !== null) {
+                if (currentRank < previousRank) {
+                    // Subió de posición
+                    rankTrendHtml = `<span class="rank-trend up" style="color: var(--success-color); font-weight: 700; font-size: 0.65rem; margin-top: 2px;">▲${previousRank - currentRank}</span>`;
+                } else if (currentRank > previousRank) {
+                    // Bajó de posición
+                    rankTrendHtml = `<span class="rank-trend down" style="color: var(--primary-color); font-weight: 700; font-size: 0.65rem; margin-top: 2px;">▼${currentRank - previousRank}</span>`;
+                } else {
+                    // Se mantuvo igual
+                    rankTrendHtml = `<span class="rank-trend same" style="color: var(--text-muted); font-weight: 700; font-size: 0.65rem; margin-top: 2px;">•</span>`;
+                }
             } else {
-                // Se mantuvo igual
+                // Sin historial de ranking
                 rankTrendHtml = `<span class="rank-trend same" style="color: var(--text-muted); font-weight: 700; font-size: 0.65rem; margin-top: 2px;">•</span>`;
             }
-        } else {
-            // Sin historial de ranking
-            rankTrendHtml = `<span class="rank-trend same" style="color: var(--text-muted); font-weight: 700; font-size: 0.65rem; margin-top: 2px;">•</span>`;
         }
         
         let trophy = '';
@@ -1516,6 +1601,13 @@ function renderLeaderboard() {
         if (user.favoriteTeam && TEAM_LOGOS[user.favoriteTeam]) {
             logoHtml = `<img src="${TEAM_LOGOS[user.favoriteTeam]}" alt="${user.favoriteTeam}" title="${user.favoriteTeam}" class="leaderboard-team-logo" style="width: 18px; height: 18px; object-fit: contain; vertical-align: middle; margin-left: 4px; border-radius: 2px;" />`;
         }
+
+        const pointsBadgeHtml = mode === 'accumulated' 
+            ? `<div class="user-points-badge" style="text-align: right; line-height: 1.2; background: rgba(0, 226, 26, 0.05); border-color: rgba(0, 226, 26, 0.2); height: auto; padding: 4px 8px;">
+                <span style="font-weight: 800; display: block; font-size: 0.95rem; color: var(--success-color);">${user.sortPoints} Pts</span>
+                <span style="font-size: 0.65rem; color: var(--text-muted); display: block; font-weight: 500;">R1:${user.r1} + R2:${user.r2}</span>
+               </div>`
+            : `<div class="user-points-badge">${user.sortPoints} Pts</div>`;
 
         const item = document.createElement('div');
         item.className = `leaderboard-item ${isSelf ? 'current-user' : ''}`;
@@ -1531,9 +1623,7 @@ function renderLeaderboard() {
                 </span>
                 <span class="user-dept">${user.dept}</span>
             </div>
-            <div class="user-points-badge">
-                ${user.totalPoints || 0} Pts
-            </div>
+            ${pointsBadgeHtml}
         `;
         list.appendChild(item);
     });
