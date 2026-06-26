@@ -2044,11 +2044,13 @@ function calculateMatchPoints(prediction, official) {
 
 // Calcular puntos totales de todos los usuarios (sin modificar la tendencia de posiciones guardada)
 function calculateAllPoints() {
+    const first36Ids = getFirst36MatchIds();
     state.users.forEach(user => {
         let total = 0;
 
         // Puntos por Fase de Grupos
         for (const matchId in user.predictions) {
+            if (first36Ids.includes(matchId)) continue; // Omitir puntos de los primeros 36 partidos (Ronda 1)
             const prediction = user.predictions[matchId];
             const official = state.officialResults[matchId];
             if (official) {
@@ -2081,6 +2083,7 @@ function calculateAllPoints() {
 
 // Calcular puntos totales y actualizar el ranking anterior (solo al cambiar resultados oficiales)
 function calculateAllPointsAdminChange() {
+    const first36Ids = getFirst36MatchIds();
     // 1. Obtener la posición actual antes de recalcular (que pasará a ser la anterior)
     const currentRanking = [...state.users]
         .filter(u => u && !u.isAdmin)
@@ -2102,6 +2105,7 @@ function calculateAllPointsAdminChange() {
 
         // Puntos por Fase de Grupos
         for (const matchId in user.predictions) {
+            if (first36Ids.includes(matchId)) continue; // Omitir puntos de los primeros 36 partidos (Ronda 1)
             const prediction = user.predictions[matchId];
             const official = state.officialResults[matchId];
             if (official) {
