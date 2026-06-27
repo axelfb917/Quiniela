@@ -1157,13 +1157,25 @@ function renderKnockoutMatches() {
             }
         }
 
-        const predictedWinner = user.knockoutWinner[`${roundKey}_${index}`];
-        const officialWinner = state.officialResults[match.id];
+        const predictedWinnerVal = user.knockoutWinner[`${roundKey}_${index}`];
+        const predictedWinner = getWinnerName(predictedWinnerVal);
+        const predictedMethod = getWinnerMethod(predictedWinnerVal);
+
+        const officialWinnerVal = state.officialResults[match.id];
+        const officialWinner = getWinnerName(officialWinnerVal);
+        const officialMethod = getWinnerMethod(officialWinnerVal);
 
         let pointsEarnedHtml = '';
         if (officialWinner && predictedWinner) {
-            const isCorrect = officialWinner === predictedWinner;
-            pointsEarnedHtml = `<span class="points-earned ${isCorrect ? 'success' : 'zero'}">${isCorrect ? '+5 Pts' : '0 Pts'}</span>`;
+            const isCorrectWinner = officialWinner === predictedWinner;
+            let pts = 0;
+            if (isCorrectWinner) {
+                pts += 3;
+                if (officialMethod === predictedMethod) {
+                    pts += 2;
+                }
+            }
+            pointsEarnedHtml = `<span class="points-earned ${pts > 0 ? 'success' : 'zero'}">+${pts} Pts</span>`;
         }
 
         const matchDiv = document.createElement('div');
@@ -1172,13 +1184,33 @@ function renderKnockoutMatches() {
         const isTeam1Selected = predictedWinner === team1.name;
         const isTeam2Selected = predictedWinner === team2.name;
 
+        const methodLabels = { regular: 'Fase Regular', extra: 'Tiempos extra', penalties: 'Penales' };
         const officialWinnerHtml = officialWinner 
-            ? `<span style="font-size:0.75rem; color:var(--warning-color); font-weight:bold; margin-top:2px;">Ganador Oficial: ${officialWinner}</span>`
+            ? `<div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px; font-size:0.75rem;">
+                <span style="color:var(--warning-color); font-weight:bold;">Ganador Oficial: ${officialWinner}</span>
+                <span style="color:var(--text-muted); font-size:0.7rem; font-weight:600;">(${methodLabels[officialMethod] || officialMethod})</span>
+               </div>`
             : `<span style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">Por jugar</span>`;
 
         const clickHandler1 = user.isAdmin ? '' : `onclick="selectKnockoutWinner('${roundKey}', ${index}, '${team1.name}')"`;
         const clickHandler2 = user.isAdmin ? '' : `onclick="selectKnockoutWinner('${roundKey}', ${index}, '${team2.name}')"`;
         const cursorStyle = user.isAdmin ? 'style="cursor: default;"' : '';
+
+        // Selector de método de victoria para el usuario
+        let methodSelectorHtml = '';
+        if (predictedWinner && !user.isAdmin) {
+            const isLocked = !!officialWinner;
+            methodSelectorHtml = `
+                <div style="margin-top: 8px; border-top: 1px dashed var(--border-color); padding-top: 8px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                    <span style="font-size: 0.7rem; color: var(--text-secondary); font-weight: 500;">Victoria por:</span>
+                    <select ${isLocked ? 'disabled' : ''} class="form-input" style="font-size: 0.75rem; padding: 2px 6px; border-radius: 6px; border: 1px solid var(--border-color); background: rgba(255,255,255,0.05); color: var(--text-primary); cursor: pointer; outline: none; width: auto; font-weight: 600;" onchange="selectKnockoutMethod('${roundKey}', ${index}, this.value)">
+                        <option value="regular" ${predictedMethod === 'regular' ? 'selected' : ''}>Fase Regular</option>
+                        <option value="extra" ${predictedMethod === 'extra' ? 'selected' : ''}>Tiempos extra</option>
+                        <option value="penalties" ${predictedMethod === 'penalties' ? 'selected' : ''}>Penales</option>
+                    </select>
+                </div>
+            `;
+        }
 
         matchDiv.innerHTML = `
             <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.75rem; color:var(--text-muted);">
@@ -1201,6 +1233,7 @@ function renderKnockoutMatches() {
                 </div>
                 <span class="bracket-team-winner-indicator">✔ Ganador</span>
             </div>
+            ${methodSelectorHtml}
             ${officialWinnerHtml}
         `;
         list.appendChild(matchDiv);
@@ -1369,6 +1402,20 @@ function getTeamEmoji(teamName) {
     return '⚽';
 }
 
+// Obtener el nombre del ganador de una estructura que puede ser string u objeto
+function getWinnerName(val) {
+    if (!val) return null;
+    if (typeof val === 'string') return val;
+    return val.winner || null;
+}
+
+// Obtener el método de victoria (regular, extra, penalties)
+function getWinnerMethod(val) {
+    if (!val) return 'regular';
+    if (typeof val === 'string') return 'regular';
+    return val.method || 'regular';
+}
+
 // Validar y limpiar cascada de predicciones o resultados oficiales si los equipos cambiaron
 function validateKnockoutPredictions(isOfficial) {
     const rounds = ['r32', 'r16', 'qf', 'sf', 'f'];
@@ -1429,15 +1476,17 @@ function validateKnockoutPredictions(isOfficial) {
             }
 
             if (isOfficial) {
-                const winner = state.officialResults[match.id];
-                if (winner && winner !== team1.name && winner !== team2.name) {
+                const officialVal = state.officialResults[match.id];
+                const winnerName = getWinnerName(officialVal);
+                if (winnerName && winnerName !== team1.name && winnerName !== team2.name) {
                     delete state.officialResults[match.id];
                     changed = true;
                 }
             } else {
                 if (user && user.knockoutWinner) {
-                    const winner = user.knockoutWinner[`${roundKey}_${index}`];
-                    if (winner && winner !== team1.name && winner !== team2.name) {
+                    const predictionVal = user.knockoutWinner[`${roundKey}_${index}`];
+                    const winnerName = getWinnerName(predictionVal);
+                    if (winnerName && winnerName !== team1.name && winnerName !== team2.name) {
                         delete user.knockoutWinner[`${roundKey}_${index}`];
                         changed = true;
                     }
@@ -1453,7 +1502,8 @@ function validateKnockoutPredictions(isOfficial) {
 function getWinnerOfPreviousMatch(roundKey, matchIndex) {
     const user = state.users.find(u => u.id === state.currentUser);
     if (!user.knockoutWinner) user.knockoutWinner = {};
-    const winnerName = user.knockoutWinner[`${roundKey}_${matchIndex}`];
+    const val = user.knockoutWinner[`${roundKey}_${matchIndex}`];
+    const winnerName = getWinnerName(val);
     if (!winnerName) return null;
 
     let emoji = getTeamEmoji(winnerName);
@@ -1463,7 +1513,8 @@ function getWinnerOfPreviousMatch(roundKey, matchIndex) {
 // Obtener el perdedor de una semifinal para disputar el tercer puesto
 function getLoserOfPreviousMatch(roundKey, matchIndex) {
     const user = state.users.find(u => u.id === state.currentUser);
-    const winnerName = user.knockoutWinner[`${roundKey}_${matchIndex}`];
+    const val = user.knockoutWinner[`${roundKey}_${matchIndex}`];
+    const winnerName = getWinnerName(val);
     if (!winnerName) return null;
 
     const matches = KNOCKOUT_MATCHES[roundKey];
@@ -1485,11 +1536,43 @@ function selectKnockoutWinner(roundKey, matchIndex, teamName) {
     if (!teamName || teamName.includes('Ganador') || teamName.includes('Finalista')) return; // No permitir selecciones placeholders
     
     if (!user.knockoutWinner) user.knockoutWinner = {};
-    user.knockoutWinner[`${roundKey}_${matchIndex}`] = teamName;
+    
+    // Si ya estaba seleccionado este equipo, deseleccionar
+    const currentVal = user.knockoutWinner[`${roundKey}_${matchIndex}`];
+    const currentWinner = getWinnerName(currentVal);
+    const currentMethod = getWinnerMethod(currentVal);
+    
+    if (currentWinner === teamName) {
+        delete user.knockoutWinner[`${roundKey}_${matchIndex}`];
+        cleanSubsequentRounds(roundKey, matchIndex);
+    } else {
+        user.knockoutWinner[`${roundKey}_${matchIndex}`] = {
+            winner: teamName,
+            method: currentWinner ? currentMethod : 'regular'
+        };
+        // Limpiar predicciones de rondas siguientes si dependían de esta llave
+        cleanSubsequentRounds(roundKey, matchIndex);
+    }
 
-    // Limpiar predicciones de rondas siguientes si dependían de esta llave
-    cleanSubsequentRounds(roundKey, matchIndex);
+    saveUsersToStorage();
+    renderKnockoutMatches();
+}
 
+// Guardar el método de victoria seleccionado por el usuario
+function selectKnockoutMethod(roundKey, matchIndex, method) {
+    const user = state.users.find(u => u.id === state.currentUser);
+    if (user.isAdmin) return;
+    
+    const key = `${roundKey}_${matchIndex}`;
+    const currentVal = user.knockoutWinner[key];
+    const winnerName = getWinnerName(currentVal);
+    if (!winnerName) return; // No puede seleccionar método si no hay ganador
+    
+    user.knockoutWinner[key] = {
+        winner: winnerName,
+        method: method
+    };
+    
     saveUsersToStorage();
     renderKnockoutMatches();
 }
@@ -1885,10 +1968,27 @@ function renderAdminMatches() {
                 }
             }
 
-            const officialWinner = state.officialResults[match.id];
+            const officialVal = state.officialResults[match.id];
+            const officialWinner = getWinnerName(officialVal);
+            const officialMethod = getWinnerMethod(officialVal);
+            
             const isKnockoutDefined = !!officialWinner;
             const knockoutBadgeClass = isKnockoutDefined ? 'status-filled' : 'status-pending';
             const knockoutBadgeText = isKnockoutDefined ? 'Definido' : 'Sin definir';
+
+            let methodSelectorHtml = '';
+            if (officialWinner) {
+                methodSelectorHtml = `
+                    <div style="margin-top: 8px; border-top: 1px dashed var(--border-color); padding-top: 8px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                        <span style="font-size: 0.7rem; color: var(--text-secondary); font-weight: 500;">Método oficial de victoria:</span>
+                        <select class="form-input" style="font-size: 0.75rem; padding: 2px 6px; border-radius: 6px; border: 1px solid var(--border-color); background: rgba(255,255,255,0.05); color: var(--text-primary); cursor: pointer; outline: none; width: auto; font-weight: 600;" onchange="setOfficialKnockoutMethod('${match.id}', this.value)">
+                            <option value="regular" ${officialMethod === 'regular' ? 'selected' : ''}>Fase Regular</option>
+                            <option value="extra" ${officialMethod === 'extra' ? 'selected' : ''}>Tiempos extra</option>
+                            <option value="penalties" ${officialMethod === 'penalties' ? 'selected' : ''}>Penales</option>
+                        </select>
+                    </div>
+                `;
+            }
 
             const card = document.createElement('div');
             card.className = 'match-card';
@@ -1913,6 +2013,7 @@ function renderAdminMatches() {
                         <span class="bracket-team-winner-indicator">✔ Oficial</span>
                     </div>
                 </div>
+                ${methodSelectorHtml}
             `;
             list.appendChild(card);
         });
@@ -1921,7 +2022,8 @@ function renderAdminMatches() {
 
 // Obtener ganador de ronda anterior oficial
 function getOfficialWinnerOfPreviousMatch(roundKey, matchIndex) {
-    const winnerName = state.officialResults[`${roundKey.toUpperCase()}_${matchIndex + 1}`];
+    const val = state.officialResults[`${roundKey.toUpperCase()}_${matchIndex + 1}`];
+    const winnerName = getWinnerName(val);
     if (!winnerName) return null;
 
     let emoji = getTeamEmoji(winnerName);
@@ -1930,7 +2032,8 @@ function getOfficialWinnerOfPreviousMatch(roundKey, matchIndex) {
 
 // Obtener perdedor de ronda anterior oficial
 function getOfficialLoserOfPreviousMatch(roundKey, matchIndex) {
-    const winnerName = state.officialResults[`${roundKey.toUpperCase()}_${matchIndex + 1}`];
+    const val = state.officialResults[`${roundKey.toUpperCase()}_${matchIndex + 1}`];
+    const winnerName = getWinnerName(val);
     if (!winnerName) return null;
 
     const matches = KNOCKOUT_MATCHES[roundKey];
@@ -1970,14 +2073,37 @@ function setOfficialKnockoutWinner(matchId, teamName) {
     const roundKey = roundPrefix.toLowerCase();
     const matchIndex = parseInt(indexStr) - 1;
 
-    if (state.officialResults[matchId] === teamName) {
+    const currentVal = state.officialResults[matchId];
+    const currentWinner = getWinnerName(currentVal);
+    const currentMethod = getWinnerMethod(currentVal);
+
+    if (currentWinner === teamName) {
         delete state.officialResults[matchId];
     } else {
-        state.officialResults[matchId] = teamName;
+        state.officialResults[matchId] = {
+            winner: teamName,
+            method: currentWinner ? currentMethod : 'regular'
+        };
     }
     
     cleanSubsequentOfficialRounds(roundKey, matchIndex);
     
+    saveOfficialResultsToStorage();
+    calculateAllPointsAdminChange();
+    renderAdminMatches();
+}
+
+// Guardar el método de victoria oficial en el Administrador
+function setOfficialKnockoutMethod(matchId, method) {
+    const currentVal = state.officialResults[matchId];
+    const winnerName = getWinnerName(currentVal);
+    if (!winnerName) return;
+
+    state.officialResults[matchId] = {
+        winner: winnerName,
+        method: method
+    };
+
     saveOfficialResultsToStorage();
     calculateAllPointsAdminChange();
     renderAdminMatches();
@@ -2061,6 +2187,8 @@ function calculateAllPoints() {
         // Puntos por Fase Final (Acierto de clasificados / ganadores en llave)
         for (const key in user.knockoutWinner) {
             const predictedWinner = user.knockoutWinner[key];
+            const predName = getWinnerName(predictedWinner);
+            const predMethod = getWinnerMethod(predictedWinner);
             
             // Extraer la llave asociada en officialResults
             // La key del usuario es 'r16_0', 'r16_1', etc. Mapeamos a 'R16_1', 'R16_2'
@@ -2069,8 +2197,14 @@ function calculateAllPoints() {
             const matchId = `${round.toUpperCase()}_${index + 1}`;
 
             const officialWinner = state.officialResults[matchId];
-            if (officialWinner && officialWinner === predictedWinner) {
-                total += 5; // Acierto de clasificado/ganador de llave (+5 pts)
+            const realName = getWinnerName(officialWinner);
+            const realMethod = getWinnerMethod(officialWinner);
+
+            if (realName && predName === realName) {
+                total += 3; // +3 Pts por acertar al ganador
+                if (predMethod === realMethod) {
+                    total += 2; // +2 Pts por acertar al método de victoria
+                }
             }
         }
 
@@ -2116,6 +2250,8 @@ function calculateAllPointsAdminChange() {
         // Puntos por Fase Final (Acierto de clasificados / ganadores en llave)
         for (const key in user.knockoutWinner) {
             const predictedWinner = user.knockoutWinner[key];
+            const predName = getWinnerName(predictedWinner);
+            const predMethod = getWinnerMethod(predictedWinner);
             
             // Extraer la llave asociada en officialResults
             const [round, indexStr] = key.split('_');
@@ -2123,8 +2259,14 @@ function calculateAllPointsAdminChange() {
             const matchId = `${round.toUpperCase()}_${index + 1}`;
 
             const officialWinner = state.officialResults[matchId];
-            if (officialWinner && officialWinner === predictedWinner) {
-                total += 5;
+            const realName = getWinnerName(officialWinner);
+            const realMethod = getWinnerMethod(officialWinner);
+
+            if (realName && predName === realName) {
+                total += 3; // +3 Pts por acertar al ganador
+                if (predMethod === realMethod) {
+                    total += 2; // +2 Pts por acertar al método de victoria
+                }
             }
         }
 
