@@ -140,21 +140,21 @@ const DEFAULT_MATCHES = [
 // Estructura de Fase Final (Definición de llaves)
 const KNOCKOUT_MATCHES = {
     r32: [
-        { id: 'R32_1', label: 'Boston', team1: 'Sudáfrica', team2: 'Canadá', emoji1: '🇿🇦', emoji2: '🇨🇦' },
-        { id: 'R32_2', label: 'Nueva York/Nueva Jersey', team1: 'Brasil', team2: 'Japón', emoji1: '🇧🇷', emoji2: '🇯🇵' },
-        { id: 'R32_3', label: 'Los Ángeles', team1: 'Alemania', team2: 'Paraguay', emoji1: '🇩🇪', emoji2: '🇵🇾' },
+        { id: 'R32_1', label: 'Los Ángeles', team1: 'Sudáfrica', team2: 'Canadá', emoji1: '🇿🇦', emoji2: '🇨🇦' },
+        { id: 'R32_2', label: 'Houston', team1: 'Brasil', team2: 'Japón', emoji1: '🇧🇷', emoji2: '🇯🇵' },
+        { id: 'R32_3', label: 'Boston', team1: 'Alemania', team2: 'Paraguay', emoji1: '🇩🇪', emoji2: '🇵🇾' },
         { id: 'R32_4', label: 'Monterrey', team1: 'Países Bajos', team2: 'Marruecos', emoji1: '🇳🇱', emoji2: '🇲🇦' },
-        { id: 'R32_5', label: 'Toronto', team1: 'Costa de Marfil', team2: 'Noruega', emoji1: '🇨🇮', emoji2: '🇳🇴' },
-        { id: 'R32_6', label: 'Los Ángeles', team1: 'Francia', team2: 'Suecia', emoji1: '🇫🇷', emoji2: '🇸🇪' },
-        { id: 'R32_7', label: 'San Francisco', team1: 'México', team2: 'Ecuador', emoji1: '🇲🇽', emoji2: '🇪🇨' },
-        { id: 'R32_8', label: 'Seattle', team1: 'Inglaterra', team2: 'RD Congo', emoji1: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', emoji2: '🇨🇩' }, // Inglaterra flag emoji fallback or text
-        { id: 'R32_9', label: 'Houston', team1: 'Bélgica', team2: 'Senegal', emoji1: '🇧🇪', emoji2: '🇸🇳' },
-        { id: 'R32_10', label: 'Dallas', team1: 'Estados Unidos', team2: 'Bosnia y Herzegovina', emoji1: '🇺🇸', emoji2: '🇧🇦' },
-        { id: 'R32_11', label: 'Ciudad de México', team1: 'España', team2: 'Austria', emoji1: '🇪🇸', emoji2: '🇦🇹' },
-        { id: 'R32_12', label: 'Atlanta', team1: 'Portugal', team2: 'Croacia', emoji1: '🇵🇹', emoji2: '🇭🇷' },
-        { id: 'R32_13', label: 'Miami', team1: 'Suiza', team2: 'Argelia', emoji1: '🇨🇭', emoji2: '🇩🇿' },
+        { id: 'R32_5', label: 'Dallas', team1: 'Costa de Marfil', team2: 'Noruega', emoji1: '🇨🇮', emoji2: '🇳🇴' },
+        { id: 'R32_6', label: 'Nueva York/Nueva Jersey', team1: 'Francia', team2: 'Suecia', emoji1: '🇫🇷', emoji2: '🇸🇪' },
+        { id: 'R32_7', label: 'Ciudad de México', team1: 'México', team2: 'Ecuador', emoji1: '🇲🇽', emoji2: '🇪🇨' },
+        { id: 'R32_8', label: 'Atlanta', team1: 'Inglaterra', team2: 'RD Congo', emoji1: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', emoji2: '🇨🇩' }, // Inglaterra flag emoji fallback or text
+        { id: 'R32_9', label: 'Seattle', team1: 'Bélgica', team2: 'Senegal', emoji1: '🇧🇪', emoji2: '🇸🇳' },
+        { id: 'R32_10', label: 'San Francisco', team1: 'Estados Unidos', team2: 'Bosnia y Herzegovina', emoji1: '🇺🇸', emoji2: '🇧🇦' },
+        { id: 'R32_11', label: 'Los Ángeles', team1: 'España', team2: 'Austria', emoji1: '🇪🇸', emoji2: '🇦🇹' },
+        { id: 'R32_12', label: 'Toronto', team1: 'Portugal', team2: 'Croacia', emoji1: '🇵🇹', emoji2: '🇭🇷' },
+        { id: 'R32_13', label: 'Vancouver', team1: 'Suiza', team2: 'Argelia', emoji1: '🇨🇭', emoji2: '🇩🇿' },
         { id: 'R32_14', label: 'Dallas', team1: 'Australia', team2: 'Egipto', emoji1: '🇦🇺', emoji2: '🇪🇬' },
-        { id: 'R32_15', label: 'Vancouver', team1: 'Argentina', team2: 'Cabo Verde', emoji1: '🇦🇷', emoji2: '🇨🇻' },
+        { id: 'R32_15', label: 'Miami', team1: 'Argentina', team2: 'Cabo Verde', emoji1: '🇦🇷', emoji2: '🇨🇻' },
         { id: 'R32_16', label: 'Kansas City', team1: 'Colombia', team2: 'Ghana', emoji1: '🇨🇴', emoji2: '🇬🇭' }
     ],
     r16: [
