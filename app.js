@@ -327,17 +327,60 @@ const ROUND_1_POINTS = {
   "u_1782018990343": 0
 };
 
+// Puntos estáticos obtenidos en la Ronda 2 (Segunda Quiniela)
+const ROUND_2_POINTS = {
+  "u_1781033495200": 67,
+  "u_1781055826501": 62,
+  "u_1781063534557": 74,
+  "u_1781063974700": 62,
+  "u_1781064499204": 82,
+  "u_1781064757578": 66,
+  "u_1781065449302": 72,
+  "u_1781068447794": 70,
+  "u_1781099056603": 66,
+  "u_1781105787230": 71,
+  "u_1781106106363": 64,
+  "u_1781106423872": 50,
+  "u_1781107492300": 71,
+  "u_1781109317296": 64,
+  "u_1781111103586": 73,
+  "u_1781111959695": 67,
+  "u_1781116943100": 57,
+  "u_1781119293468": 76,
+  "u_1781121115974": 77,
+  "u_1781122181066": 81,
+  "u_1781123503213": 65,
+  "u_1781124734888": 80,
+  "u_1781124979916": 59,
+  "u_1781134640285": 69,
+  "u_1781145675071": 57,
+  "u_1781182592035": 70,
+  "u_1781188471740": 61,
+  "u_1781189007704": 52,
+  "u_1781189814687": 72,
+  "u_1781196268442": 72,
+  "u_1781197220547": 66,
+  "u_1781200282528": 24,
+  "u_1781200325188": 60,
+  "u_1781200493623": 39,
+  "u_1781208156403": 63,
+  "u_1781397919241": 56,
+  "u_1781667897593": 71,
+  "u_1781908387758": 56,
+  "u_1782018990343": 54
+};
+
 // Variables de Estado global
 let state = {
     activePage: 'profile',
     currentGroup: 'ALL',
-    currentRound: 1, // 1 para Ronda 1 (primeros 36), 2 para Ronda 2 (últimos 36)
+    currentRound: 3, // 1 para Ronda 1, 2 para Ronda 2, 3 para Ronda 3 (Fase Final)
     currentKnockoutRound: 'r32',
     adminPhase: 'groups',
     currentUser: null,
     users: [],
     officialResults: {}, // { matchId: { score1, score2 } } o { knockoutId: winnerTeamName }
-    leaderboardMode: 'current' // 'current' (R2) o 'accumulated' (R1 + R2)
+    leaderboardMode: 'current' // 'current' (R3) o 'accumulated' (R1 + R2 + R3)
 };
 
 // Inicialización al cargar la página
@@ -1621,7 +1664,7 @@ function renderLeaderboard() {
     const btn = document.getElementById('leaderboardToggleBtn');
     if (btn) {
         if (state.leaderboardMode === 'accumulated') {
-            btn.textContent = 'Ver Tabla Ronda 2 (Actual)';
+            btn.textContent = 'Ver Tabla Ronda 3 (Actual)';
             btn.style.borderColor = 'var(--success-color)';
             btn.style.color = 'var(--success-color)';
         } else {
@@ -1636,13 +1679,15 @@ function renderLeaderboard() {
     const sortedUsers = [...state.users]
         .filter(u => u && !u.isAdmin)
         .map(u => {
-            const r2 = u.totalPoints || 0;
+            const r3 = u.totalPoints || 0;
+            const r2 = ROUND_2_POINTS[u.id] || 0;
             const r1 = ROUND_1_POINTS[u.id] || 0;
             return {
                 ...u,
                 r1: r1,
                 r2: r2,
-                sortPoints: mode === 'accumulated' ? (r1 + r2) : r2
+                r3: r3,
+                sortPoints: mode === 'accumulated' ? (r1 + r2 + r3) : r3
             };
         })
         .sort((a, b) => b.sortPoints - a.sortPoints);
@@ -1682,7 +1727,7 @@ function renderLeaderboard() {
         const pointsBadgeHtml = mode === 'accumulated' 
             ? `<div class="user-points-badge" style="text-align: right; line-height: 1.2; background: rgba(0, 226, 26, 0.05); border-color: rgba(0, 226, 26, 0.2); height: auto; padding: 4px 8px;">
                 <span style="font-weight: 800; display: block; font-size: 0.95rem; color: var(--success-color);">${user.sortPoints} Pts</span>
-                <span style="font-size: 0.65rem; color: var(--text-muted); display: block; font-weight: 500;">R1:${user.r1} + R2:${user.r2}</span>
+                <span style="font-size: 0.65rem; color: var(--text-muted); display: block; font-weight: 500;">R1:${user.r1} + R2:${user.r2} + R3:${user.r3}</span>
                </div>`
             : `<div class="user-points-badge">${user.sortPoints} Pts</div>`;
 
@@ -2164,19 +2209,8 @@ function calculateMatchPoints(prediction, official) {
 
 // Calcular puntos totales de todos los usuarios (sin modificar la tendencia de posiciones guardada)
 function calculateAllPoints() {
-    const first36Ids = getFirst36MatchIds();
     state.users.forEach(user => {
         let total = 0;
-
-        // Puntos por Fase de Grupos
-        for (const matchId in user.predictions) {
-            if (first36Ids.includes(matchId)) continue; // Omitir puntos de los primeros 36 partidos (Ronda 1)
-            const prediction = user.predictions[matchId];
-            const official = state.officialResults[matchId];
-            if (official) {
-                total += calculateMatchPoints(prediction, official);
-            }
-        }
 
         // Puntos por Fase Final (Acierto de clasificados / ganadores en llave)
         for (const key in user.knockoutWinner) {
@@ -2211,7 +2245,6 @@ function calculateAllPoints() {
 
 // Calcular puntos totales y actualizar el ranking anterior (solo al cambiar resultados oficiales)
 function calculateAllPointsAdminChange() {
-    const first36Ids = getFirst36MatchIds();
     // 1. Obtener la posición actual antes de recalcular (que pasará a ser la anterior)
     const currentRanking = [...state.users]
         .filter(u => u && !u.isAdmin)
@@ -2230,16 +2263,6 @@ function calculateAllPointsAdminChange() {
     // 2. Recalcular puntos
     state.users.forEach(user => {
         let total = 0;
-
-        // Puntos por Fase de Grupos
-        for (const matchId in user.predictions) {
-            if (first36Ids.includes(matchId)) continue; // Omitir puntos de los primeros 36 partidos (Ronda 1)
-            const prediction = user.predictions[matchId];
-            const official = state.officialResults[matchId];
-            if (official) {
-                total += calculateMatchPoints(prediction, official);
-            }
-        }
 
         // Puntos por Fase Final (Acierto de clasificados / ganadores en llave)
         for (const key in user.knockoutWinner) {
