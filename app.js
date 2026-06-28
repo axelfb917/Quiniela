@@ -140,46 +140,46 @@ const DEFAULT_MATCHES = [
 // Estructura de Fase Final (Definición de llaves)
 const KNOCKOUT_MATCHES = {
     r32: [
-        { id: 'R32_1', label: 'Los Ángeles', team1: 'Sudáfrica', team2: 'Canadá', emoji1: '🇿🇦', emoji2: '🇨🇦' },
-        { id: 'R32_2', label: 'Houston', team1: 'Brasil', team2: 'Japón', emoji1: '🇧🇷', emoji2: '🇯🇵' },
-        { id: 'R32_3', label: 'Boston', team1: 'Alemania', team2: 'Paraguay', emoji1: '🇩🇪', emoji2: '🇵🇾' },
-        { id: 'R32_4', label: 'Monterrey', team1: 'Países Bajos', team2: 'Marruecos', emoji1: '🇳🇱', emoji2: '🇲🇦' },
-        { id: 'R32_5', label: 'Dallas', team1: 'Costa de Marfil', team2: 'Noruega', emoji1: '🇨🇮', emoji2: '🇳🇴' },
-        { id: 'R32_6', label: 'Nueva York/Nueva Jersey', team1: 'Francia', team2: 'Suecia', emoji1: '🇫🇷', emoji2: '🇸🇪' },
-        { id: 'R32_7', label: 'Ciudad de México', team1: 'México', team2: 'Ecuador', emoji1: '🇲🇽', emoji2: '🇪🇨' },
-        { id: 'R32_8', label: 'Atlanta', team1: 'Inglaterra', team2: 'RD Congo', emoji1: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', emoji2: '🇨🇩' }, // Inglaterra flag emoji fallback or text
-        { id: 'R32_9', label: 'Seattle', team1: 'Bélgica', team2: 'Senegal', emoji1: '🇧🇪', emoji2: '🇸🇳' },
-        { id: 'R32_10', label: 'San Francisco', team1: 'Estados Unidos', team2: 'Bosnia y Herzegovina', emoji1: '🇺🇸', emoji2: '🇧🇦' },
-        { id: 'R32_11', label: 'Los Ángeles', team1: 'España', team2: 'Austria', emoji1: '🇪🇸', emoji2: '🇦🇹' },
-        { id: 'R32_12', label: 'Toronto', team1: 'Portugal', team2: 'Croacia', emoji1: '🇵🇹', emoji2: '🇭🇷' },
-        { id: 'R32_13', label: 'Vancouver', team1: 'Suiza', team2: 'Argelia', emoji1: '🇨🇭', emoji2: '🇩🇿' },
-        { id: 'R32_14', label: 'Dallas', team1: 'Australia', team2: 'Egipto', emoji1: '🇦🇺', emoji2: '🇪🇬' },
-        { id: 'R32_15', label: 'Miami', team1: 'Argentina', team2: 'Cabo Verde', emoji1: '🇦🇷', emoji2: '🇨🇻' },
-        { id: 'R32_16', label: 'Kansas City', team1: 'Colombia', team2: 'Ghana', emoji1: '🇨🇴', emoji2: '🇬🇭' }
+        { id: 'R32_1', label: 'Los Ángeles', team1: 'Sudáfrica', team2: 'Canadá', emoji1: '🇿🇦', emoji2: '🇨🇦', date: '28', time: '13:00' },
+        { id: 'R32_2', label: 'Houston', team1: 'Brasil', team2: 'Japón', emoji1: '🇧🇷', emoji2: '🇯🇵', date: '29', time: '11:00' },
+        { id: 'R32_3', label: 'Boston', team1: 'Alemania', team2: 'Paraguay', emoji1: '🇩🇪', emoji2: '🇵🇾', date: '29', time: '14:30' },
+        { id: 'R32_4', label: 'Monterrey', team1: 'Países Bajos', team2: 'Marruecos', emoji1: '🇳🇱', emoji2: '🇲🇦', date: '29', time: '19:00' },
+        { id: 'R32_5', label: 'Dallas', team1: 'Costa de Marfil', team2: 'Noruega', emoji1: '🇨🇮', emoji2: '🇳🇴', date: '30', time: '11:00' },
+        { id: 'R32_6', label: 'Nueva York/Nueva Jersey', team1: 'Francia', team2: 'Suecia', emoji1: '🇫🇷', emoji2: '🇸🇪', date: '30', time: '15:00' },
+        { id: 'R32_7', label: 'Ciudad de México', team1: 'México', team2: 'Ecuador', emoji1: '🇲🇽', emoji2: '🇪🇨', date: '30', time: '19:00' },
+        { id: 'R32_8', label: 'Atlanta', team1: 'Inglaterra', team2: 'RD Congo', emoji1: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', emoji2: '🇨🇩', date: '1', time: '10:00' },
+        { id: 'R32_9', label: 'Seattle', team1: 'Bélgica', team2: 'Senegal', emoji1: '🇧🇪', emoji2: '🇸🇳', date: '1', time: '14:00' },
+        { id: 'R32_10', label: 'San Francisco', team1: 'Estados Unidos', team2: 'Bosnia y Herzegovina', emoji1: '🇺🇸', emoji2: '🇧🇦', date: '1', time: '18:00' },
+        { id: 'R32_11', label: 'Los Ángeles', team1: 'España', team2: 'Austria', emoji1: '🇪🇸', emoji2: '🇦🇹', date: '2', time: '13:00' },
+        { id: 'R32_12', label: 'Toronto', team1: 'Portugal', team2: 'Croacia', emoji1: '🇵🇹', emoji2: '🇭🇷', date: '2', time: '17:00' },
+        { id: 'R32_13', label: 'Vancouver', team1: 'Suiza', team2: 'Argelia', emoji1: '🇨🇭', emoji2: '🇩🇿', date: '2', time: '21:00' },
+        { id: 'R32_14', label: 'Dallas', team1: 'Australia', team2: 'Egipto', emoji1: '🇦🇺', emoji2: '🇪🇬', date: '3', time: '12:00' },
+        { id: 'R32_15', label: 'Miami', team1: 'Argentina', team2: 'Cabo Verde', emoji1: '🇦🇷', emoji2: '🇨🇻', date: '3', time: '16:00' },
+        { id: 'R32_16', label: 'Kansas City', team1: 'Colombia', team2: 'Ghana', emoji1: '🇨🇴', emoji2: '🇬🇭', date: '3', time: '19:30' }
     ],
     r16: [
-        { id: 'R16_1', label: 'Filadelfia', team1: 'Ganador Eliminatoria 1', team2: 'Ganador Eliminatoria 2', emoji1: '🏆', emoji2: '🏆' },
-        { id: 'R16_2', label: 'Houston', team1: 'Ganador Eliminatoria 3', team2: 'Ganador Eliminatoria 4', emoji1: '🏆', emoji2: '🏆' },
-        { id: 'R16_3', label: 'Dallas', team1: 'Ganador Eliminatoria 5', team2: 'Ganador Eliminatoria 6', emoji1: '🏆', emoji2: '🏆' },
-        { id: 'R16_4', label: 'Seattle', team1: 'Ganador Eliminatoria 7', team2: 'Ganador Eliminatoria 8', emoji1: '🏆', emoji2: '🏆' },
-        { id: 'R16_5', label: 'Nueva York/Nueva Jersey', team1: 'Ganador Eliminatoria 9', team2: 'Ganador Eliminatoria 10', emoji1: '🏆', emoji2: '🏆' },
-        { id: 'R16_6', label: 'Ciudad de México', team1: 'Ganador Eliminatoria 11', team2: 'Ganador Eliminatoria 12', emoji1: '🏆', emoji2: '🏆' },
-        { id: 'R16_7', label: 'Atlanta', team1: 'Ganador Eliminatoria 13', team2: 'Ganador Eliminatoria 14', emoji1: '🏆', emoji2: '🏆' },
-        { id: 'R16_8', label: 'Vancouver', team1: 'Ganador Eliminatoria 15', team2: 'Ganador Eliminatoria 16', emoji1: '🏆', emoji2: '🏆' }
+        { id: 'R16_1', label: 'Filadelfia', team1: 'Ganador Eliminatoria 1', team2: 'Ganador Eliminatoria 2', emoji1: '🏆', emoji2: '🏆', date: '4', time: '12:00' },
+        { id: 'R16_2', label: 'Houston', team1: 'Ganador Eliminatoria 3', team2: 'Ganador Eliminatoria 4', emoji1: '🏆', emoji2: '🏆', date: '4', time: '16:00' },
+        { id: 'R16_3', label: 'Dallas', team1: 'Ganador Eliminatoria 5', team2: 'Ganador Eliminatoria 6', emoji1: '🏆', emoji2: '🏆', date: '5', time: '12:00' },
+        { id: 'R16_4', label: 'Seattle', team1: 'Ganador Eliminatoria 7', team2: 'Ganador Eliminatoria 8', emoji1: '🏆', emoji2: '🏆', date: '5', time: '16:00' },
+        { id: 'R16_5', label: 'Nueva York/Nueva Jersey', team1: 'Ganador Eliminatoria 9', team2: 'Ganador Eliminatoria 10', emoji1: '🏆', emoji2: '🏆', date: '6', time: '12:00' },
+        { id: 'R16_6', label: 'Ciudad de México', team1: 'Ganador Eliminatoria 11', team2: 'Ganador Eliminatoria 12', emoji1: '🏆', emoji2: '🏆', date: '6', time: '16:00' },
+        { id: 'R16_7', label: 'Atlanta', team1: 'Ganador Eliminatoria 13', team2: 'Ganador Eliminatoria 14', emoji1: '🏆', emoji2: '🏆', date: '7', time: '12:00' },
+        { id: 'R16_8', label: 'Vancouver', team1: 'Ganador Eliminatoria 15', team2: 'Ganador Eliminatoria 16', emoji1: '🏆', emoji2: '🏆', date: '7', time: '16:00' }
     ],
     qf: [
-        { id: 'QF_1', label: 'Boston', team1: 'Ganador Octavos 1', team2: 'Ganador Octavos 2', emoji1: '🏆', emoji2: '🏆' },
-        { id: 'QF_2', label: 'Los Ángeles', team1: 'Ganador Octavos 3', team2: 'Ganador Octavos 4', emoji1: '🏆', emoji2: '🏆' },
-        { id: 'QF_3', label: 'Miami', team1: 'Ganador Octavos 5', team2: 'Ganador Octavos 6', emoji1: '🏆', emoji2: '🏆' },
-        { id: 'QF_4', label: 'Kansas City', team1: 'Ganador Octavos 7', team2: 'Ganador Octavos 8', emoji1: '🏆', emoji2: '🏆' }
+        { id: 'QF_1', label: 'Boston', team1: 'Ganador Octavos 1', team2: 'Ganador Octavos 2', emoji1: '🏆', emoji2: '🏆', date: '9', time: '12:00' },
+        { id: 'QF_2', label: 'Los Ángeles', team1: 'Ganador Octavos 3', team2: 'Ganador Octavos 4', emoji1: '🏆', emoji2: '🏆', date: '10', time: '12:00' },
+        { id: 'QF_3', label: 'Miami', team1: 'Ganador Octavos 5', team2: 'Ganador Octavos 6', emoji1: '🏆', emoji2: '🏆', date: '11', time: '12:00' },
+        { id: 'QF_4', label: 'Kansas City', team1: 'Ganador Octavos 7', team2: 'Ganador Octavos 8', emoji1: '🏆', emoji2: '🏆', date: '11', time: '16:00' }
     ],
     sf: [
-        { id: 'SF_1', label: 'Dallas', team1: 'Ganador Cuartos 1', team2: 'Ganador Cuartos 2', emoji1: '🏆', emoji2: '🏆' },
-        { id: 'SF_2', label: 'Atlanta', team1: 'Ganador Cuartos 3', team2: 'Ganador Cuartos 4', emoji1: '🏆', emoji2: '🏆' }
+        { id: 'SF_1', label: 'Dallas', team1: 'Ganador Cuartos 1', team2: 'Ganador Cuartos 2', emoji1: '🏆', emoji2: '🏆', date: '14', time: '19:00' },
+        { id: 'SF_2', label: 'Atlanta', team1: 'Ganador Cuartos 3', team2: 'Ganador Cuartos 4', emoji1: '🏆', emoji2: '🏆', date: '15', time: '19:00' }
     ],
     f: [
-        { id: 'F_1', label: 'Gran Final - Nueva York/Nueva Jersey', team1: 'Ganador Semifinal 1', team2: 'Ganador Semifinal 2', emoji1: '🏆', emoji2: '🏆' },
-        { id: 'F_2', label: 'Partido Tercer Puesto - Miami', team1: 'Perdedor Semifinal 1', team2: 'Perdedor Semifinal 2', emoji1: '🥉', emoji2: '🥉' }
+        { id: 'F_1', label: 'Gran Final - Nueva York/Nueva Jersey', team1: 'Ganador Semifinal 1', team2: 'Ganador Semifinal 2', emoji1: '🏆', emoji2: '🏆', date: '19', time: '14:00' },
+        { id: 'F_2', label: 'Partido Tercer Puesto - Miami', team1: 'Perdedor Semifinal 1', team2: 'Perdedor Semifinal 2', emoji1: '🥉', emoji2: '🥉', date: '18', time: '14:00' }
     ]
 };
 
@@ -268,6 +268,35 @@ function isMatchLocked(matchId) {
     } else {
         return now >= SECOND_STAGE_LOCK_TIME;
     }
+}
+
+function parseKnockoutMatchDate(dateStr, timeStr) {
+    const day = parseInt(dateStr);
+    const [hours, minutes] = timeStr.split(':').map(Number);
+    // Si el día es menor a 15, asumimos que es Julio (mes 6 en JS). Si es mayor o igual a 15, es Junio (mes 5 en JS).
+    const month = day < 15 ? 6 : 5;
+    return new Date(2026, month, day, hours, minutes);
+}
+
+function isKnockoutMatchLocked(roundKey, matchIndex) {
+    const matches = KNOCKOUT_MATCHES[roundKey];
+    const match = matches[matchIndex];
+    if (!match) return true;
+
+    // Si tiene fecha y hora asignadas
+    if (match.date && match.time) {
+        const matchTime = parseKnockoutMatchDate(match.date, match.time);
+        const now = new Date();
+        return now >= matchTime;
+    }
+
+    // Si no tiene fecha/hora definidas, se bloquea si el resultado oficial ya está determinado
+    const official = state.officialResults[match.id];
+    if (official && getWinnerName(official)) {
+        return true;
+    }
+
+    return false;
 }
 
 function isAllGroupStageLocked() {
@@ -1227,6 +1256,7 @@ function renderKnockoutMatches() {
         const isTeam1Selected = predictedWinner === team1.name;
         const isTeam2Selected = predictedWinner === team2.name;
 
+        const isLocked = isKnockoutMatchLocked(roundKey, index);
         const methodLabels = { regular: 'Fase Regular', extra: 'Tiempos extra', penalties: 'Penales' };
         const officialWinnerHtml = officialWinner 
             ? `<div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px; font-size:0.75rem;">
@@ -1235,14 +1265,13 @@ function renderKnockoutMatches() {
                </div>`
             : `<span style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">Por jugar</span>`;
 
-        const clickHandler1 = user.isAdmin ? '' : `onclick="selectKnockoutWinner('${roundKey}', ${index}, '${team1.name}')"`;
-        const clickHandler2 = user.isAdmin ? '' : `onclick="selectKnockoutWinner('${roundKey}', ${index}, '${team2.name}')"`;
-        const cursorStyle = user.isAdmin ? 'style="cursor: default;"' : '';
+        const clickHandler1 = (user.isAdmin || isLocked) ? '' : `onclick="selectKnockoutWinner('${roundKey}', ${index}, '${team1.name}')"`;
+        const clickHandler2 = (user.isAdmin || isLocked) ? '' : `onclick="selectKnockoutWinner('${roundKey}', ${index}, '${team2.name}')"`;
+        const cursorStyle = (user.isAdmin || isLocked) ? 'style="cursor: default;"' : '';
 
         // Selector de método de victoria para el usuario
         let methodSelectorHtml = '';
         if (predictedWinner && !user.isAdmin) {
-            const isLocked = !!officialWinner;
             methodSelectorHtml = `
                 <div style="margin-top: 8px; border-top: 1px dashed var(--border-color); padding-top: 8px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
                     <span style="font-size: 0.7rem; color: var(--text-secondary); font-weight: 500;">Victoria por:</span>
@@ -1568,6 +1597,7 @@ function getLoserOfPreviousMatch(roundKey, matchIndex) {
 
 // Guardar el ganador seleccionado por el usuario en el bracket
 function selectKnockoutWinner(roundKey, matchIndex, teamName) {
+    if (isKnockoutMatchLocked(roundKey, matchIndex)) return; // Bloquear si el partido ya empezó o está bloqueado
     const user = state.users.find(u => u.id === state.currentUser);
     if (user.isAdmin) return; // El administrador no realiza predicciones
     if (!teamName || teamName.includes('Ganador') || teamName.includes('Finalista')) return; // No permitir selecciones placeholders
@@ -1597,6 +1627,7 @@ function selectKnockoutWinner(roundKey, matchIndex, teamName) {
 
 // Guardar el método de victoria seleccionado por el usuario
 function selectKnockoutMethod(roundKey, matchIndex, method) {
+    if (isKnockoutMatchLocked(roundKey, matchIndex)) return; // Bloquear si el partido ya empezó o está bloqueado
     const user = state.users.find(u => u.id === state.currentUser);
     if (user.isAdmin) return;
     
