@@ -1284,7 +1284,7 @@ function resolveTeamSlot(slotId, isOfficial) {
         return team ? { name: team.name, emoji: team.emoji } : { name: `3º Clasificado ${index}`, emoji: '🏳️' };
     }
     
-    return { name: slotId, emoji: '🏳️' };
+    return { name: slotId, emoji: getTeamEmoji(slotId) };
 }
 
 // Calcular la tabla de posiciones de un grupo
