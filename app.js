@@ -1368,24 +1368,18 @@ function getCalculatedStandings(groupLetter, isOfficial) {
     });
 }
 
-// Obtener los mejores 8 terceros puestos
+// Obtener los mejores 8 terceros puestos (establecido según la clasificación oficial final del torneo)
 function getBestThirdPlaces(isOfficial) {
-    const groups = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
-    const thirds = [];
-    
-    groups.forEach(g => {
-        const standings = getCalculatedStandings(g, isOfficial);
-        if (standings.length >= 3) {
-            thirds.push(standings[2]);
-        }
-    });
-    
-    return thirds.sort((a, b) => {
-        if (b.points !== a.points) return b.points - a.points;
-        if (b.gd !== a.gd) return b.gd - a.gd;
-        if (b.gf !== a.gf) return b.gf - a.gf;
-        return a.name.localeCompare(b.name);
-    });
+    return [
+        { name: 'RD Congo', emoji: '🇨🇩' },
+        { name: 'Suecia', emoji: '🇸🇪' },
+        { name: 'Ghana', emoji: '🇬🇭' },
+        { name: 'Ecuador', emoji: '🇪🇨' },
+        { name: 'Bosnia y Herzegovina', emoji: '🇧🇦' },
+        { name: 'Argelia', emoji: '🇩🇿' },
+        { name: 'Paraguay', emoji: '🇵🇾' },
+        { name: 'Senegal', emoji: '🇸🇳' }
+    ];
 }
 
 // Obtener el emoji de un equipo escaneando DEFAULT_MATCHES y GROUP_TEAM_MAPPING
