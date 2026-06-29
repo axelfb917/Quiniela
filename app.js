@@ -435,19 +435,6 @@ async function loadDatabase() {
         // 1. Cargar Resultados Oficiales
         if (officialResults) {
             state.officialResults = officialResults;
-            
-            // Sanitizar resultados de fase final incompatibles del formato anterior
-            const hasR32 = Object.keys(state.officialResults).some(k => k.startsWith('R32_'));
-            const hasLegacy = Object.keys(state.officialResults).some(k => k.startsWith('R16_') || k.startsWith('QF_') || k.startsWith('SF_') || k.startsWith('F_'));
-            
-            if (hasLegacy && !hasR32) {
-                for (const key in state.officialResults) {
-                    if (key.startsWith('R16_') || key.startsWith('QF_') || key.startsWith('SF_') || key.startsWith('F_')) {
-                        delete state.officialResults[key];
-                    }
-                }
-                await saveOfficialResultsToStorage();
-            }
         } else {
             // Si no hay resultados oficiales en la base de datos, inicializar como vacío
             state.officialResults = {};
@@ -548,17 +535,9 @@ async function loadDatabase() {
                 }
             }
 
-            // Sanitizar predicciones incompatibles
             state.users.forEach(u => {
                 if (!u.predictions) u.predictions = {};
                 if (!u.knockoutWinner) u.knockoutWinner = {};
-                
-                const hasR32Pred = Object.keys(u.knockoutWinner).some(k => k.startsWith('r32_'));
-                const hasLegacyPred = Object.keys(u.knockoutWinner).some(k => k.startsWith('r16_') || k.startsWith('qf_') || k.startsWith('sf_') || k.startsWith('f_') || k.startsWith('R16_'));
-                
-                if (hasLegacyPred && !hasR32Pred) {
-                    u.knockoutWinner = {};
-                }
             });
 
             // Asegurarnos de que el administrador siempre esté registrado en la base de datos
@@ -1484,6 +1463,7 @@ function getWinnerMethod(val) {
 
 // Validar y limpiar cascada de predicciones o resultados oficiales si los equipos cambiaron
 function validateKnockoutPredictions(isOfficial) {
+    if (isOfficial) return false; // El administrador controla los resultados oficiales de manera explícita en cascada, no limpiar en segundo plano
     const rounds = ['r32', 'r16', 'qf', 'sf', 'f'];
     const user = state.users ? state.users.find(u => u.id === state.currentUser) : null;
     
